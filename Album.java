@@ -1,5 +1,3 @@
- 
-
 import java.util.ArrayList;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
@@ -16,7 +14,7 @@ public class Album {
 		this.genreId = genreId;
 		this.title = title;
 		this.year = year;
-		this.picture = "resources/images/" + picture;
+		this.picture = "images/" + picture;
 	}
 
 	public int getId() {

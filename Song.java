@@ -71,14 +71,14 @@ public class Song {
 		return null;
 	}
 
-	public ArrayList<Artist> getFeatures() {
+	public ArrayList<Artist> getFeatures() { //TODO
 		ArrayList<Artist> features = new ArrayList<Artist>();
 		ResultSet results = Main.database.getResultOfQuery("SELECT ArtistId FROM ArtistsFeaturedInSongs WHERE SongId = " + id);
 
 		if (results != null) {
 			try {
 				while (results.next())
-					for (Artist artist : Main.libraryController.getArtists())
+					for (Artist artist : Artist.getAllFromDatabase())
 						if (artist.getId() == results.getInt("ArtistId"))
 							features.add(artist);
 			} catch (SQLException resultsexception) {

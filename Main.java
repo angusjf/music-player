@@ -1,4 +1,3 @@
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -11,7 +10,7 @@ import javafx.scene.image.Image;
 public class Main extends Application {
 
     static final String DATABASE_FILE = "database.db";
-    final String FXML_SCENE_FILE = "MainScene.fxml";
+    final String FXML_SCENE_FILE = "data/MainScene.fxml";
     final String SCENE_TITLE = "Music Player";
     final int MIN_HEIGHT = 400, MIN_WIDTH = 600;
 
