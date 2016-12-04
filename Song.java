@@ -1,5 +1,3 @@
- 
-
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.ResultSet;
@@ -8,20 +6,16 @@ import java.sql.SQLException;
 
 public class Song {
 
+	//SELECT ArtistId, SongId FROM ArtistsFeaturedInSongs
+
 	private int id;
 	private int albumId;
 	private int trackNumber;
 	private String name, file, length;
 
-	public Song() { //TODO REMOVE
-		this(0, 0, 0, "test song", "", "1:23");
-	}
-
 	public Song(int id, int albumId, int trackNumber, String name, String file, String length) {
 		this.id = id;
 		this.albumId = albumId;
-		//ResultSet album = Main.database.getResultOfQuery("SELECT Id, AlbumId, GenreId, TrackNumber, Name, File, Length FROM Songs");
-		//this.genre = genreId;
 		this.trackNumber = trackNumber;
 		this.name = name;
 		this.file = file;

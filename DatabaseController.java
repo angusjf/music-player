@@ -3,12 +3,15 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.io.File;
 
 class DatabaseController { //like 70% Steve's work
 
 	public Connection connection;
 
 	public DatabaseController(String file) {
+		File databaseFile = new File(file);
+		System.out.println(databaseFile.exists() ? "yep that database is real" : "noooooooo database");
 		connect(file);
 	}
 

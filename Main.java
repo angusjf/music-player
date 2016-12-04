@@ -9,7 +9,7 @@ import javafx.scene.image.Image;
 
 public class Main extends Application {
 
-    static final String DATABASE_FILE = "database.db";
+    static final String DATABASE_FILE = "data/database.db";
     final String FXML_SCENE_FILE = "data/MainScene.fxml";
     final String SCENE_TITLE = "Music Player";
     final int MIN_HEIGHT = 400, MIN_WIDTH = 600;
