@@ -21,40 +21,6 @@ public class Playlist {
 		return name;
 	}
 
-	//EDSADAS
-	
-	public Song getSong() {
-		PreparedStatement statement = Main.database.createStatement("SELECT * FROM SONG WHERE ID = ?");
-		try {
-			statement.setInt(1, songId);
-		} catch (SQLException ex) {
-			System.out.println("- setting ? error");
-		}
-		assert statement != null;
-
-		ResultSet results = Main.database.runStatement(statement);
-
-		if (results != null) {
-			try {
-				while (results.next()) {
-					return new Song (
-						results.getInt("Id"), 
-						results.getInt("ArtistId"),
-						results.getInt("GenreId"),
-						results.getString("Title"), 
-						results.getString("Year"),
-						results.getString("Picture")
-					);
-				}
-			} catch (SQLException resultsexception) {
-				System.out.println("- Database result processing error: " + resultsexception.getMessage());
-			}
-		}
-		return null;
-	}
-
-	/////
-
 	public ArrayList<Song> getSongs() {
 		ArrayList<Song> songs = new ArrayList<Song>();
 

@@ -14,7 +14,7 @@ public class Album {
 		this.genreId = genreId;
 		this.title = title;
 		this.year = year;
-		this.picture = "images/" + picture;
+		this.picture = "resources/images/" + picture;
 	}
 
 	public int getId() {
