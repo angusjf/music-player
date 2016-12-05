@@ -1,18 +1,30 @@
-import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.collections.FXCollections;
-import javafx.scene.text.Text;
-import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Button;
-import javafx.scene.layout.TilePane;
-import javafx.geometry.Insets;
-import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
 import java.util.stream.Collectors;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class MainSceneController {
+
+	final String SCENE_TITLE = "Music Player";
+	final int MIN_HEIGHT = 400, MIN_WIDTH = 600;
+	private Stage stage;
 
 	@FXML private ChoiceBox viewsChoiceBox;
 	@FXML private Text songNameText;
@@ -31,29 +43,45 @@ public class MainSceneController {
 		Main.musicController.addToQueueEnd(Album.getAllFromDatabase().get(0)); //TEMP TODO 
 	}
 
-	@FXML
-	void initialize() {
+	public void setStage(Stage stage, Scene scene) {
+		this.stage = stage;
+		stage.setTitle(SCENE_TITLE);
+		stage.setMinHeight(MIN_WIDTH);
+		stage.setMinWidth(MIN_HEIGHT);
+		stage.getIcons().add(new Image("file:resources/logo.png"));
+		stage.show();
 
+		// secure close button
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			public void handle(WindowEvent we) {
+				Main.terminate();
+				we.consume();
+			}
+		});
+	}
+
+	@FXML void initialize() {
 		try {
 			assert viewsChoiceBox != null		: "- viewsChoiceBox is null";
-			assert songNameText != null			: "- songNameText is null";
+			assert songNameText != null		: "- songNameText is null";
 			assert artistNameText != null		: "- artistNameText is null";
-			assert featuresNamesText != null		: "- featuresNamesText is null";
+			assert featuresNamesText != null	: "- featuresNamesText is null";
 			assert albumNameText != null		: "- albumNameText is null";
 			assert timeElapsedtext != null		: "- timeElapsedtext is null";
 			assert songProgressBar != null		: "- songProgressBar is null";
 			assert songLengthText != null		: "- songLengthText is null";
 			assert currentSongPauseButton != null	: "- currentSongPauseButton is null";
-			assert libraryPane != null			: "- libraryPane is null";
-			assert searchBox != null			: "- searchBox is null";
+			assert libraryPane != null		: "- libraryPane is null";
+			assert searchBox != null		: "- searchBox is null";
 		} catch (AssertionError ae) {
 			System.out.println("FXML assertion failure: " + ae.getMessage());
 			Main.terminate();
 		}
+
 		viewsChoiceBox.setValue("what");//TODO
 		viewsChoiceBox.setItems(
-				FXCollections.observableArrayList("Albums", "Songs", "Artists", "Genres", "Playlists")
-				);
+			FXCollections.observableArrayList("Albums", "Songs", "Artists", "Genres", "Playlists")
+		);
 
 		updateSongText(Main.musicController.getCurrentSong());//TODO make this update automatically
 		updateTimeElapsed();//TODO same
@@ -154,6 +182,38 @@ public class MainSceneController {
 	void onSearch() {
 		showSearchResultsView(searchBox.getText());
 	}
+
+	@FXML void newFileClicked() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Choose a Music File");
+		fileChooser.showOpenDialog(stage);
+/*
+		openButton.setOnAction(
+			new EventHandler<ActionEvent>() {
+				@Override public void handle(final ActionEvent e) {
+					File file = fileChooser.showOpenDialog(stage);
+					if (file != null) {
+						//openFile(file);
+					}
+				}
+			}
+		);
+
+		openMultipleButton.setOnAction(
+			new EventHandler<ActionEvent>() {
+				@Override public void handle(final ActionEvent e) {
+					List<File> list = fileChooser.showOpenMultipleDialog(stage);
+					if (list != null) {
+						for (File file : list) {
+							openFile(file);
+						}
+					}
+				}
+			}
+		);
+		*/
+	}
+
 
 	// BEHIND THE SCENES
 

@@ -54,7 +54,6 @@ class DatabaseController { //like 70% Steve's work
 
 	public void disconnect() {
 		System.out.println("+ Disconnecting from database.");
-		Main.libraryController.saveLibraryToDatabase();
 		try {
 			if (connection != null) connection.close();
 		} catch (SQLException finalexception) {

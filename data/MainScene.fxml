@@ -146,7 +146,7 @@
                   </VBox>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Next Song">
                      <font>
-                        <Font size="18.0" />
+                        <Font name="Roboto Regular" size="18.0" />
                      </font></Text>
                   <TableView editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <columns>
