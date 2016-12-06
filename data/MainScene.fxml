@@ -25,9 +25,10 @@
          <children>
             <VBox prefHeight="398.0" prefWidth="295.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <HBox prefHeight="0.0" prefWidth="295.0">
+                  <HBox prefHeight="0.0" prefWidth="295.0" spacing="5.0">
                      <children>
                         <ChoiceBox fx:id="viewsChoiceBox" prefWidth="150.0" />
+                        <Button mnemonicParsing="false" onAction="#newFileClicked" text="Import Files" />
                         <Region disable="true" minHeight="0.0" minWidth="8.0" prefHeight="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                         <TextField fx:id="searchBox" onAction="#onSearch" prefHeight="33.0" prefWidth="167.0" promptText="Search..." snapToPixel="false">
                            <rotationAxis>

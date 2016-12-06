@@ -92,29 +92,25 @@ public class MainSceneController {
 
 	public void updateSongText(Song song) {
 		if (song == null) {
-			//hide and text
 			songNameText.setText("");
 			artistNameText.setText("");
 			featuresNamesText.setText("");
 			albumNameText.setText("");
+		} else {
+			songNameText.setText(song.toString() + " - ");
+			artistNameText.setText(song.getArtist().toString() + " - ");
+			featuresNamesText.setText(song.getFeatures().size() != 0 ? String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList()) + " - ") : "");
+			albumNameText.setText(song.getAlbum().toString());
+			songLengthText.setText(song.getLength());
 		}
-		songNameText.setText(song.toString() + " - ");
-		artistNameText.setText(song.getArtist().toString() + " - ");
-		featuresNamesText.setText(song.getFeatures().size() != 0 ? String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList()) + " - ") : "");
-		albumNameText.setText(song.getAlbum().toString());
-		songLengthText.setText(song.getLength());
 	}
 
 	public void updateTimeElapsed() {
 		timeElapsedtext.setText(Main.musicController.getTimeElapsed());
 	}
 
-	public void updateSongQueueContents() {//TODO
-		/* queue = Main.musicController.getQueue();
-		 * for (int i = 1; i < queue.size(); i++) {
-		 * 	songQueue.add(queue.get(i));
-		 * }
-		 */
+	public void updateSongQueueContents() {
+		//songQueue.addAll(Main.musicController.getQueue().sublist(1, queue.size()));
 	}
 
 	public void fillLibraryPane() {
@@ -141,8 +137,7 @@ public class MainSceneController {
 
 	}
 
-	@FXML
-	void currentSongPauseClicked() {
+	@FXML void currentSongPauseClicked() {
 		System.out.println("+ pause clicked");
 
 		fillLibraryPane();
@@ -153,20 +148,17 @@ public class MainSceneController {
 		//currentSongPauseButton.setText(">"); TODO
 	}
 
-	@FXML
-	void viewsChoiceBoxClicked() { //TODO
+	@FXML void viewsChoiceBoxClicked() { //TODO
 		System.out.println("+ viewsChoiceBoxClicked");
 	}
 
-	@FXML
-	void songPlayClicked() {
+	@FXML void songPlayClicked() {
 		//Song song = new Song();//(Song)listView.getSelectionModel().getSelectedItem();
 		//if (song != null)
 		//	Main.musicController.addToQueue(song);
 	}
 
-	@FXML
-	void albumPlayClicked() {
+	@FXML void albumPlayClicked() {
 		/*
 		Song song = (Song)listView.getSelectionModel().getSelectedItem();
 		if (song != null)
@@ -174,13 +166,11 @@ public class MainSceneController {
 		*/
 	}
 
-	@FXML
-	void openVisualiserClicked() {
+	@FXML void openVisualiserClicked() {
 		Main.openVisualiser();
 	}
 
-	@FXML
-	void onSearch() {
+	@FXML void onSearch() {
 		showSearchResultsView(searchBox.getText());
 	}
 
@@ -188,7 +178,7 @@ public class MainSceneController {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Choose a Music File");
 		fileChooser.showOpenDialog(stage);
-/*
+		/*
 		openButton.setOnAction(
 			new EventHandler<ActionEvent>() {
 				@Override public void handle(final ActionEvent e) {
@@ -234,7 +224,17 @@ public class MainSceneController {
 
 			vBox.getChildren().addAll(image, name, artist);
 			libraryPane.getChildren().addAll(vBox);
-		}
+		} //TODO TODO TODO
+
+		/*
+
+		thing . onclick( new thing(
+
+			showFiletered songs search( "hwere id id ") {
+
+			}
+
+			*/
 	}
 
 	void showSongsView() {
