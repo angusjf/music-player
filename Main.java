@@ -19,8 +19,8 @@ public class Main extends Application {
 
 	@Override public void start(Stage stage) throws Exception /* BUT MAKE IT MORE CATCHY HAHA */ {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_SCENE_FILE));
-		System.out.println("ERROR: loader.getController() == '" + loader.getController() + "' (<- prints 'null')");
-		//((MainSceneController) loader.getController()).setStage(stage, new Scene(loader.load()));
+		Scene scene = new Scene(loader.load());
+		((MainSceneController) loader.getController()).setStage(stage, scene);
 	}
 
 	public static void terminate() {

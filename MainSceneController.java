@@ -45,6 +45,7 @@ public class MainSceneController {
 
 	public void setStage(Stage stage, Scene scene) {
 		this.stage = stage;
+		stage.setScene(scene);
 		stage.setTitle(SCENE_TITLE);
 		stage.setMinHeight(MIN_WIDTH);
 		stage.setMinWidth(MIN_HEIGHT);
