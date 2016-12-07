@@ -17,9 +17,15 @@ public class Main extends Application {
 		launch(args);
 	}
 
-	@Override public void start(Stage stage) throws Exception { // BUT MAKE IT MORE CATCHY HAHA
+	@Override public void start(Stage stage) throws Exception {
+
+		/* NOTES
+		 * loader.load MUST be caled before loader.getController
+		 * TODO - find a better way to throw / catch fxml errors
+		 */
+
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_SCENE_FILE));
-		Scene scene = new Scene(loader.load()); // this has to be a separate statement - loader.load must be called
+		Scene scene = new Scene(loader.load());
 		((MainSceneController) loader.getController()).setStage(stage, scene);
 	}
 

@@ -43,8 +43,7 @@ public class MainSceneController {
 
 	public MainSceneController () {
 		System.out.println("+ Main Scene Controller class started");
-	//	Main.musicController.addToQueueEnd(Album.getAllFromDatabase().get(0)); //TEMP TODO 
-	//	showSongsView(Album.getAllFromDatabase().get(0).getSongs()); //TODO
+		Main.musicController.addToQueueEnd(Album.getAllFromDatabase().get(0)); //TEMP TODO 
 	}
 
 	public void setStage(Stage stage, Scene scene) {
@@ -83,15 +82,23 @@ public class MainSceneController {
 			Main.terminate();
 		}
 
+		//TODO VVVVVVVVV
+
 		viewsChoiceBox.setValue("what");//TODO
 		viewsChoiceBox.setItems(
 			FXCollections.observableArrayList("Albums", "Songs", "Artists", "Genres", "Playlists")
 		);
+		viewsChoiceBox.getItems().addAll("Albums", "Songs", "Artists", "Genres", "Playlists");
+		ChoiceBox cb = new ChoiceBox();
+		cb.getItems().addAll("hello", "o kay", "nice one");
+		cb.getSelectionModel().selectFirst();
+		
 
 		//updateSongText(Main.musicController.getCurrentSong());//TODO make this update automatically
 		//updateTimeElapsed();//TODO same
 
 		fillLibraryPane();
+		libraryPane.getChildren().addAll(cb);
 	}
 
 	public void updateSongText(Song song) {
