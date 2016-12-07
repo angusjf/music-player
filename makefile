@@ -1,4 +1,4 @@
-all: comp run clean
+all: comp run
 comp:
 	javac *.java
 run:

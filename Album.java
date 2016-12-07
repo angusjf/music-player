@@ -64,6 +64,7 @@ public class Album {
 				System.out.println("- Database result processing error: " + resultsexception.getMessage());
 			}
 		}
+
 		return songs;
 	}
 

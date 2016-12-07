@@ -15,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -232,8 +233,7 @@ public class MainSceneController {
                     	//album.setOnAction((ActionEvent ae) -> showSongsView(album.getSongs()));
 			image.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 				@Override public void handle(MouseEvent event) {
-					System.out.println(">>>> opening " + album + "; with song fisrt " + album.getSongs().get(0));
-					showSongsView(album.getSongs());
+					showSongsView(album.toString(), album.getSongs());
 					event.consume();
 				}
 			});
@@ -245,24 +245,28 @@ public class MainSceneController {
 
 	void showSongsView() {
 		//just overloaded to show all songs
-		showSongsView(Song.getAllFromDatabase());
+		showSongsView("All Songs", Song.getAllFromDatabase());
 	}
 
 	void showSearchResultsView(String query) {
 		//basically just turns a query into an arraylist for showsongsview
-		showSongsView(
+		showSongsView("Search Results for query '" + query + "'",
 			Song.getAllFromDatabase().stream().filter(
 			s -> s.toString().toLowerCase().contains(query.toLowerCase()))
 			.collect(Collectors.toList())
 		);
 	}
 
-	void showSongsView(List<Song> songs) { // the 'real' method
+	void showSongsView(String header, List<Song> songs) { // the 'real' method
 		libraryPane.getChildren().clear();
+		VBox vBox = new VBox();
+		libraryPane.getChildren().addAll(vBox);
+		vBox.getChildren().addAll(new Text(header + ":"));
+		if (songs.size() == 0) {
+			vBox.getChildren().addAll(new Text("No songs found!"));
+		}
 		for (Song song : songs) {
-			VBox vBox = new VBox();
 			vBox.getChildren().addAll(new Text(song.toString()));
-			libraryPane.getChildren().addAll(vBox);
 		}
 	}
 
