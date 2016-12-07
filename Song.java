@@ -1,12 +1,11 @@
 import java.util.List;
+import java.io.File;
 import java.util.ArrayList;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Song {
-
-	//SELECT ArtistId, SongId FROM ArtistsFeaturedInSongs
 
 	private int id;
 	private int albumId;
@@ -20,6 +19,11 @@ public class Song {
 		this.name = name;
 		this.file = file;
 		this.length = length;
+	}
+
+	public Song(File file) {
+		//TODO
+		System.out.println("*new song from file ' "  + file);
 	}
 
 	public int getId() {

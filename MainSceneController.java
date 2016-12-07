@@ -166,32 +166,15 @@ public class MainSceneController {
 	@FXML void newFileClicked() {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Choose a Music File");
-		fileChooser.showOpenDialog(stage);
-		/*
-		openButton.setOnAction(
-			new EventHandler<ActionEvent>() {
-				@Override public void handle(final ActionEvent e) {
-					File file = fileChooser.showOpenDialog(stage);
-					if (file != null) {
-						//openFile(file);
-					}
-				}
+		List<File> list = fileChooser.showOpenMultipleDialog(stage);
+		if (list != null) {
+			for (File file : list) {
+				Song song = new Song(file);
 			}
-		);
+		}
+		fillLibraryPane();
 
-		openMultipleButton.setOnAction(
-			new EventHandler<ActionEvent>() {
-				@Override public void handle(final ActionEvent e) {
-					List<File> list = fileChooser.showOpenMultipleDialog(stage);
-					if (list != null) {
-						for (File file : list) {
-							openFile(file);
-						}
-					}
-				}
-			}
-		);
-		*/
+		System.out.println(">this");
 	}
 
 

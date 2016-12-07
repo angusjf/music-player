@@ -6,8 +6,6 @@
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -33,7 +31,7 @@
                               <Insets />
                            </HBox.margin>
                         </Button>
-                        <ChoiceBox fx:id="viewsChoiceBox" onMouseClicked="#fillLibraryPane" prefWidth="150.0">
+                        <ChoiceBox fx:id="viewsChoiceBox" onMouseClicked="#fillLibraryPane" prefHeight="27.0" prefWidth="128.0">
                            <tooltip>
                               <Tooltip text="Choose View" />
                            </tooltip></ChoiceBox>
@@ -56,14 +54,6 @@
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
-                     <children>
-                        <VBox layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
-                           </children>
-                        </VBox>
-                     </children>
                   </AnchorPane>
                </children>
             </VBox>
@@ -153,16 +143,11 @@
                      <font>
                         <Font size="18.0" />
                      </font></Text>
-                  <TableView editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-                    <columns>
-                      <TableColumn editable="false" prefWidth="37.0" sortable="false" text="No" />
-                      <TableColumn editable="false" prefWidth="113.0" sortable="false" text="Name" />
-                        <TableColumn editable="false" prefWidth="99.0" sortable="false" text="Artist" />
-                        <TableColumn editable="false" prefWidth="82.0" sortable="false" text="Album" />
-                        <TableColumn editable="false" prefWidth="58.0" sortable="false" text="Time" />
-                        <TableColumn editable="false" prefWidth="73.0" sortable="false" text="Genre" />
-                    </columns>
-                  </TableView>
+                  <AnchorPane fx:id="queuePane" prefHeight="355.0" prefWidth="479.0" style="-fx-border-color: #aaa; -fx-border-width: 1; -fx-border-radius: 3;" VBox.vgrow="ALWAYS">
+                     <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                     </padding>
+                  </AnchorPane>
                </children>
             </VBox>
          </children>
