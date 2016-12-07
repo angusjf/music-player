@@ -10,11 +10,9 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -27,13 +25,22 @@
                <children>
                   <HBox prefHeight="0.0" prefWidth="295.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onBackButtonPressed" text="&lt;">
+                        <Button mnemonicParsing="false" onAction="#onBackButtonPressed" text="⬅︎">
                            <tooltip>
                               <Tooltip text="Back" />
                            </tooltip>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
                         </Button>
-                        <ChoiceBox fx:id="viewsChoiceBox" prefWidth="150.0" />
-                        <Button mnemonicParsing="false" onAction="#newFileClicked" text="Import Files" />
+                        <ChoiceBox fx:id="viewsChoiceBox" onMouseClicked="#fillLibraryPane" prefWidth="150.0">
+                           <tooltip>
+                              <Tooltip text="Choose View" />
+                           </tooltip></ChoiceBox>
+                        <Button mnemonicParsing="false" onAction="#newFileClicked" text="Import Files">
+                           <tooltip>
+                              <Tooltip text="Import a new track into your library" />
+                           </tooltip></Button>
                         <Region disable="true" minHeight="0.0" minWidth="8.0" prefHeight="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                         <TextField fx:id="searchBox" onAction="#onSearch" prefHeight="33.0" prefWidth="167.0" promptText="Search..." snapToPixel="false">
                            <rotationAxis>
@@ -42,25 +49,20 @@
                         </TextField>
                      </children>
                   </HBox>
-                  <AnchorPane VBox.vgrow="ALWAYS">
+                  <AnchorPane fx:id="libraryPane" style="-fx-border-color: #aaa; -fx-border-width: 1; -fx-border-radius: 3;" VBox.vgrow="ALWAYS">
+                     <padding>
+                        <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
+                     </padding>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
                      <children>
-                        <TilePane id="libraryPane" fx:id="libraryPane" pickOnBounds="false" prefHeight="447.0" prefWidth="479.0" style="-fx-border-radius: 3; -fx-border-width: 1; -fx-border-color: #aaa;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="100.0">
                            <children>
-                              <VBox prefHeight="170.0" prefWidth="142.0" spacing="4.0">
-                                 <children>
-                                    <ImageView fitHeight="142.0" fitWidth="142.0" pickOnBounds="true" />
-                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Album Name" />
-                                    <Text fill="#00000094" strokeType="OUTSIDE" strokeWidth="0.0" text="Artist" />
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                                 </padding>
-                              </VBox>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
                            </children>
-                           <padding>
-                              <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-                           </padding>
-                        </TilePane>
+                        </VBox>
                      </children>
                   </AnchorPane>
                </children>
@@ -100,13 +102,10 @@
                                           <Font name="System Bold" size="13.0" />
                                        </font>
                                     </Button>
-                                    <Button mnemonicParsing="false" text="x">
+                                    <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="113.0" text="Skip">
                                        <tooltip>
                                           <Tooltip text="Stop" />
                                        </tooltip>
-                                       <font>
-                                          <Font name="System Bold" size="13.0" />
-                                       </font>
                                     </Button>
                                     <HBox prefHeight="27.0" prefWidth="333.0" HBox.hgrow="ALWAYS">
                                        <children>
@@ -115,7 +114,7 @@
 					  <Text fx:id="artistNameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Artist - ">
 					  	<font><Font name="Roboto Regular" size="14.0" /></font></Text>
                                           <Text fx:id="featuresNamesText" strokeType="OUTSIDE" strokeWidth="0.0" text="Featured - ">
-					  	<font><Font name="Roboto Regular" size="14.0" /></font></Text>
+					  	<font><Font size="14.0" /></font></Text>
                                           <Text fx:id="albumNameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Album">
 					  	<font><Font name="Roboto Regular" size="14.0" /></font></Text>
                                        </children>
@@ -123,7 +122,7 @@
                                           <Insets left="5.0" top="5.0" />
                                        </HBox.margin>
                                     </HBox>
-                                    <Button mnemonicParsing="false" onAction="#openVisualiserClicked" text="~" />
+                                    <Button mnemonicParsing="false" onAction="#openVisualiserClicked" prefHeight="27.0" prefWidth="137.0" text="Visualise" />
                                  </children>
                               </HBox>
                               <HBox prefHeight="8.0" prefWidth="295.0">
@@ -152,7 +151,7 @@
                   </VBox>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Next Song">
                      <font>
-                        <Font name="Roboto Regular" size="18.0" />
+                        <Font size="18.0" />
                      </font></Text>
                   <TableView editable="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <columns>

@@ -26,7 +26,7 @@ public class Main extends Application {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_SCENE_FILE));
 		Scene scene = new Scene(loader.load());
-		((MainSceneController) loader.getController()).setStage(stage, scene);
+		((MainSceneController) loader.getController()).setupStage(stage, scene);
 	}
 
 	public static void terminate() {

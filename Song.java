@@ -35,7 +35,7 @@ public class Song {
 	}
 
 	public String getLength() {
-		return length;
+		return length == null || length.length() < 1 ? "0:00" : length;
 	}
 
 	public Artist getArtist() {
