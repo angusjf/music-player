@@ -19,6 +19,8 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import java.util.List;
+import javafx.scene.input.MouseEvent;
 
 public class MainSceneController {
 
@@ -40,7 +42,8 @@ public class MainSceneController {
 
 	public MainSceneController () {
 		System.out.println("+ Main Scene Controller class started");
-		Main.musicController.addToQueueEnd(Album.getAllFromDatabase().get(0)); //TEMP TODO 
+	//	Main.musicController.addToQueueEnd(Album.getAllFromDatabase().get(0)); //TEMP TODO 
+	//	showSongsView(Album.getAllFromDatabase().get(0).getSongs()); //TODO
 	}
 
 	public void setStage(Stage stage, Scene scene) {
@@ -84,8 +87,8 @@ public class MainSceneController {
 			FXCollections.observableArrayList("Albums", "Songs", "Artists", "Genres", "Playlists")
 		);
 
-		updateSongText(Main.musicController.getCurrentSong());//TODO make this update automatically
-		updateTimeElapsed();//TODO same
+		//updateSongText(Main.musicController.getCurrentSong());//TODO make this update automatically
+		//updateTimeElapsed();//TODO same
 
 		fillLibraryPane();
 	}
@@ -135,6 +138,10 @@ public class MainSceneController {
 				break;
 		}
 
+	}
+
+	@FXML void onBackButtonPressed() {
+		fillLibraryPane();
 	}
 
 	@FXML void currentSongPauseClicked() {
@@ -221,34 +228,38 @@ public class MainSceneController {
 			Text name = new Text(album.toString());
 			Text artist = new Text(album.getArtist().toString());
 			//artist.setFill(Color.GREY); TODO
+			
+                    	//album.setOnAction((ActionEvent ae) -> showSongsView(album.getSongs()));
+			image.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override public void handle(MouseEvent event) {
+					System.out.println(">>>> opening " + album + "; with song fisrt " + album.getSongs().get(0));
+					showSongsView(album.getSongs());
+					event.consume();
+				}
+			});
 
 			vBox.getChildren().addAll(image, name, artist);
 			libraryPane.getChildren().addAll(vBox);
-		} //TODO TODO TODO
-
-		/*
-
-		thing . onclick( new thing(
-
-			showFiletered songs search( "hwere id id ") {
-
-			}
-
-			*/
+		} 
 	}
 
 	void showSongsView() {
-		libraryPane.getChildren().clear();
-		for (Song song : Song.getAllFromDatabase()) {
-			VBox vBox = new VBox();
-			vBox.getChildren().addAll(new Text(song.toString()));
-			libraryPane.getChildren().addAll(vBox);
-		}
+		//just overloaded to show all songs
+		showSongsView(Song.getAllFromDatabase());
 	}
 
 	void showSearchResultsView(String query) {
+		//basically just turns a query into an arraylist for showsongsview
+		showSongsView(
+			Song.getAllFromDatabase().stream().filter(
+			s -> s.toString().toLowerCase().contains(query.toLowerCase()))
+			.collect(Collectors.toList())
+		);
+	}
+
+	void showSongsView(List<Song> songs) { // the 'real' method
 		libraryPane.getChildren().clear();
-		for (Song song : Song.getAllFromDatabase().stream().filter(s -> s.toString().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList())) {
+		for (Song song : songs) {
 			VBox vBox = new VBox();
 			vBox.getChildren().addAll(new Text(song.toString()));
 			libraryPane.getChildren().addAll(vBox);

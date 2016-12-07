@@ -36,7 +36,15 @@ public class Album {
 	public ArrayList<Song> getSongs() {
 		ArrayList<Song> songs = new ArrayList<Song>();
 
-		ResultSet results = Main.database.getResultOfQuery("SELECT Id, AlbumId, TrackNumber, Name, File, Length FROM Songs ORDER BY TrackNumber ASC");
+		PreparedStatement statement = Main.database.createStatement("SELECT Id, AlbumId, TrackNumber, Name, File, Length FROM Songs WHERE AlbumId = ? ORDER BY TrackNumber ASC");
+
+		try {
+			statement.setInt(1, id);
+		} catch (SQLException ex) {
+			System.out.println("- setting ? error");
+		}
+
+		ResultSet results = Main.database.runStatement(statement);
 
 		if (results != null) {
 			try {
