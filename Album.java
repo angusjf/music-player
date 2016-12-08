@@ -44,7 +44,7 @@ public class Album {
 			System.out.println("- setting ? error");
 		}
 
-		ResultSet results = Main.database.runStatement(statement);
+		ResultSet results = Main.database.runSelectStatement(statement);
 
 		if (results != null) {
 			try {
@@ -77,7 +77,7 @@ public class Album {
 		}
 		assert statement != null;
 
-		ResultSet results = Main.database.runStatement(statement);
+		ResultSet results = Main.database.runSelectStatement(statement);
 
 		if (results != null) {
 			try {
@@ -102,7 +102,7 @@ public class Album {
 		PreparedStatement statement = Main.database.createStatement("SELECT * FROM ALBUMS");
 		assert statement != null;
 
-		ResultSet results = Main.database.runStatement(statement);
+		ResultSet results = Main.database.runSelectStatement(statement);
 
 		if (results != null) {
 			try {

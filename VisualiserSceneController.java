@@ -1,5 +1,3 @@
- 
-
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;

@@ -15,30 +15,6 @@ class DatabaseController { //like 70% Steve's work
 		connect(file);
 	}
 
-	public PreparedStatement createStatement(String query) {
-		PreparedStatement statement = null;
-		try {
-			statement = connection.prepareStatement(query);
-		} catch (SQLException resultsException) {
-			System.out.println("Database statement error: " + resultsException.getMessage());
-		}
-		return statement;
-	}
-
-	public ResultSet runStatement(PreparedStatement statement) {
-		try {
-			return statement.executeQuery();
-		} catch (SQLException queryException) {
-			System.out.println("Database query error: " + queryException.getMessage());
-			return null;
-		}
-	}
-
-	//TODO just for compatibility
-	public ResultSet getResultOfQuery(String query) {
-		return runStatement(createStatement(query));
-	}
-
 	private void connect(String databaseFile) {
 		try {
 			Class.forName("org.sqlite.JDBC"); // checks for a missing driver class
@@ -58,6 +34,37 @@ class DatabaseController { //like 70% Steve's work
 			if (connection != null) connection.close();
 		} catch (SQLException finalexception) {
 			System.out.println("- Database disconnection error: " + finalexception.getMessage());
+		}
+	}
+
+	// STATEMENTS
+	
+	public PreparedStatement createStatement(String query) {
+		PreparedStatement statement = null;
+		try {
+			statement = connection.prepareStatement(query);
+		} catch (SQLException resultsException) {
+			System.out.println("Database statement error: " + resultsException.getMessage());
+		}
+		return statement;
+	}
+
+	public ResultSet runSelectStatement(PreparedStatement statement) {
+		try {
+			return statement.executeQuery();
+		} catch (SQLException queryException) {
+			System.out.println("Database query error: " + queryException.getMessage());
+			return null;
+		}
+	}
+	//TODO just for compatibility
+	public ResultSet getResultOfQuery(String query) { return runSelectStatement(createStatement(query)); }
+
+	public void runUpdateStatement(PreparedStatement statement) {
+		try {
+			statement.executeUpdate();
+		} catch (SQLException queryException) {
+			System.out.println("Database update error: " + queryException.getMessage());
 		}
 	}
 }

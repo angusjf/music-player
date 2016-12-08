@@ -22,8 +22,28 @@ public class Song {
 	}
 
 	public Song(File file) {
-		//TODO
-		System.out.println("*new song from file ' "  + file);
+
+		int fileAlbumId = 0;
+		int fileTrackNumber = 5;
+		String fileName = file.getName();
+		String fileFile = file.getAbsolutePath();
+		String fileLength = "0";
+
+		PreparedStatement statement = Main.database.createStatement(
+			"INSERT INTO SONGS (AlbumId, TrackNumber, Name, File, Length) VALUES (?, ?, ?, ?, ?)"
+		);
+
+		try {
+			statement.setInt(1, fileAlbumId);
+			statement.setInt(2, fileTrackNumber);
+			statement.setString(3, fileName);
+			statement.setString(4, fileFile);
+			statement.setString(5, fileLength);
+		}  catch (SQLException ex) {
+			System.out.println("- setting ? error");
+		}
+		
+		Main.database.runUpdateStatement(statement);
 	}
 
 	public int getId() {
@@ -51,7 +71,7 @@ public class Song {
 		}
 		assert statement != null;
 
-		ResultSet results = Main.database.runStatement(statement);
+		ResultSet results = Main.database.runSelectStatement(statement);
 
 		if (results != null) {
 			try {
@@ -95,7 +115,7 @@ public class Song {
 		}
 		assert statement != null;
 
-		ResultSet results = Main.database.runStatement(statement);
+		ResultSet results = Main.database.runSelectStatement(statement);
 
 		if (results != null) {
 			try {

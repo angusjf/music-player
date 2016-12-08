@@ -172,9 +172,9 @@ public class MainSceneController {
 				Song song = new Song(file);
 			}
 		}
-		fillLibraryPane();
 
-		System.out.println(">this");
+		System.out.println(">new file(s) added");
+		fillLibraryPane();
 	}
 
 

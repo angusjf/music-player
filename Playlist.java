@@ -32,7 +32,7 @@ public class Playlist {
 		}
 		assert statement != null;
 
-		ResultSet results = Main.database.runStatement(statement);
+		ResultSet results = Main.database.runSelectStatement(statement);
 
 		if (results != null) {
 			try {
@@ -62,7 +62,7 @@ public class Playlist {
 		PreparedStatement statement = Main.database.createStatement("SELECT * FROM PLAYLISTS");
 		assert statement != null;
 
-		ResultSet results = Main.database.runStatement(statement);
+		ResultSet results = Main.database.runSelectStatement(statement);
 
 		if (results != null) {
 			try {

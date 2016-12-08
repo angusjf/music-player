@@ -38,7 +38,7 @@ class Artist {
 			System.out.println("- setting ? error");
 		}
 
-		ResultSet results = Main.database.runStatement(statement);
+		ResultSet results = Main.database.runSelectStatement(statement);
 
 		if (results != null) {
 			try {
