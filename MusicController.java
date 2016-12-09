@@ -22,13 +22,17 @@ class MusicController {
 		queue = new ArrayList<Song>();
 	}
 
-	// SETTERS
+	/*
+	 * SETTERS
+	 */
 
 	//QUEUE
+	
 	public void addToQueueEnd(Song song) {
 		queue.add(song);
-		//TODO update queue container
+		Main.mainSceneController.updateSongQueueContents();
 	}
+
 	public void addToQueueEnd(Album album) {
 		for (Song song : album.getSongs()) {
 			addToQueueEnd(song);
@@ -36,7 +40,8 @@ class MusicController {
 	}
 
 	public void addToQueueNext(Song song) {
-		//TODO update queue
+		queue.add(queue.size() > 0 ? -1 : 0, song);
+		Main.mainSceneController.updateSongQueueContents();
 	}
 
 	public void skipCurrentSongAndPlay(Song song) {
@@ -45,7 +50,10 @@ class MusicController {
 	}
 
 	public void nextSong() {
-		queue.remove(0);
+		if (queue.size() > 0) {
+			queue.remove(0);
+			Main.mainSceneController.updateSongQueueContents();
+		}
 		if (queue.size() > 0) { //checks there is a next song to play TODO
 			if (shuffle) {
 				setSong(queue.get((int)(Math.random() * queue.size())));
@@ -55,16 +63,18 @@ class MusicController {
 		}
 	}
 
-
 	//PAUSE / PLAY
 
 	public void togglePaused() {
 		setPaused(!isPaused());
 	}
+
 	public void setPaused(boolean p) {
 		paused = p;
 		if (paused) pause(); else play();
 	}
+
+	//PLAY MODE / SHUFFLE
 
 	public void toggleShuffle() {
 		shuffle = !shuffle;
@@ -91,18 +101,21 @@ class MusicController {
 		//mediaPlayer.seek(pos * mediaPlayer);
 	}
 
-	// GETTERS
-	
+	/*
+	 * GETTERS
+	 */
+
 	public boolean isPaused() { return paused; }
 
-	public Song getCurrentSong() { return queue.get(0); }
+	public Song getCurrentSong() { return queue.size() > 0 ? queue.get(0) : null; }
 
 	public String getTimeElapsed() { return mediaPlayer != null ? mediaPlayer.currentTimeProperty().toString() : ""; }
 
 	public ArrayList<Song> getQueue() { return queue; }
 
-
-	//INTERNAL METHODS (only mention of mediaPlayer should be here
+	/*
+	 * INTERNAL METHODS (only mention of mediaPlayer should be here)
+	 */
 
 	private void setSong(Song song) {
 		Media media = new Media(new File(song.getFile()).toURI().toString());
@@ -123,10 +136,9 @@ class MusicController {
  			mediaPlayer.pause();
 	}
 
-
-//}
-
-	//NASTY VISUALISER STUFF
+	/*
+	 * NASTY VISUALISER STUFF
+	*/
 
 	double t = 0;//TODO
 	public double getFrequency (double n) {

@@ -10,6 +10,7 @@ public class Main extends Application {
 
 	public static DatabaseController database;
 	public static MusicController musicController; //should this be static?
+	public static MainSceneController mainSceneController;
 
 	public static void main(String[] args) {
 		database = new DatabaseController(DATABASE_FILE);
@@ -26,7 +27,8 @@ public class Main extends Application {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(FXML_SCENE_FILE));
 		Scene scene = new Scene(loader.load());
-		((MainSceneController) loader.getController()).setupStage(stage, scene);
+		mainSceneController = (MainSceneController) loader.getController();
+		mainSceneController.setupStage(stage, scene);
 	}
 
 	public static void terminate() {
