@@ -35,18 +35,24 @@ class MusicController {
 
 	public void addToQueueEnd(Album album) {
 		for (Song song : album.getSongs()) {
-			addToQueueEnd(song);
+			addToQueueEnd(song); // ^
 		}
 	}
 
 	public void addToQueueNext(Song song) {
-		queue.add(queue.size() > 0 ? -1 : 0, song);
+		if (queue.size() == 0) {
+			queue.add(0, song);
+		} else {
+			queue.add(1, song);
+		}
 		Main.mainSceneController.updateSongQueueContents();
 	}
 
 	public void skipCurrentSongAndPlay(Song song) {
 		addToQueueNext(song);
-		nextSong();
+		if (queue.size() > 1)
+			nextSong();
+		setPaused(false);
 	}
 
 	public void nextSong() {
@@ -54,13 +60,25 @@ class MusicController {
 			queue.remove(0);
 			Main.mainSceneController.updateSongQueueContents();
 		}
+
 		if (queue.size() > 0) { //checks there is a next song to play TODO
 			if (shuffle) {
 				setSong(queue.get((int)(Math.random() * queue.size())));
 			} else {
 				setSong(queue.get(0));
 			}
+		} else {
+			setSong();
 		}
+	}
+
+	public void clearQueue() {
+		if (queue.size() > 0) {
+			Song temp = queue.get(0);
+			queue.clear();
+			queue.add(temp);
+		}
+		Main.mainSceneController.updateSongQueueContents();
 	}
 
 	//PAUSE / PLAY
@@ -72,6 +90,7 @@ class MusicController {
 	public void setPaused(boolean p) {
 		paused = p;
 		if (paused) pause(); else play();
+		Main.mainSceneController.updateCurrentSongPausedButton();
 	}
 
 	//PLAY MODE / SHUFFLE
@@ -122,6 +141,12 @@ class MusicController {
 		if (mediaPlayer != null) mediaPlayer.stop();
 		mediaPlayer = new MediaPlayer(media);
 		setPaused(false);
+	}
+
+	private void setSong() {
+		setPaused(true);
+	//	mediaPlayer.stop();
+		mediaPlayer = null;
 	}
 	
 	private void play() {

@@ -24,7 +24,7 @@ class Artist {
 	}
 
 	public String getPicture() {
-		return picture;
+		return picture != null ? picture : "resources/images/error.png";
 	}
 
 	public ArrayList<Album> getAlbums() {

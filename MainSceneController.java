@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.ArrayList;
 import javafx.scene.input.MouseEvent;
 import java.util.Stack;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 enum LibraryView {
 	ALBUMS, SONGS, ARTISTS, GENRES, PLAYLISTS
@@ -94,6 +96,13 @@ public class MainSceneController {
 		}
 
 		viewsChoiceBox.getItems().addAll("Albums", "Songs", "Artists", "Genres", "Playlists");
+		viewsChoiceBox.getSelectionModel().selectedItemProperty().addListener(
+			new ChangeListener<String>() {
+				@Override public void changed(ObservableValue ov, String t, String t1) {                
+					fillLibraryPane();
+				}    
+			}
+		);
 		viewsChoiceBox.getSelectionModel().selectFirst();
 
 		//TODO VVVVVVVVV
@@ -101,9 +110,11 @@ public class MainSceneController {
 
 		//timeElapsedtext.textProperty().bind(Main.musicController.getTimeElapsed()); 
 		//songProgressBar.  Main.musicController.setSeek(M
-
-		fillLibraryPane();
 	}
+
+	/*
+	 * PUBLIC UI UPDATE METHODS
+	 */
 
 	public void updateSongText() {
 		Song song = Main.musicController.getCurrentSong();
@@ -130,14 +141,18 @@ public class MainSceneController {
 
 	public void updateSongQueueContents() {
 		List<Song> queue = Main.musicController.getQueue();
-		if (queue.size() > 1) {
-			queue.subList(1, queue.size());
-			System.out.println(queue);
-		}
+		String out = "queue is: ";
+		//if (queue.size() > 1) {
+			//out += queue.subList(1, queue.size());
+		//} else {
+			out += queue.toString();
+		//}
+		System.out.println(out);
 	}
 
 	public void fillLibraryPane() {
-		switch (viewsChoiceBox.getSelectionModel().getSelectedItem().toString()) {
+		String viewString = viewsChoiceBox.getSelectionModel().getSelectedItem().toString();
+		switch (viewString) {
 			case "Albums":
 				showAlbumsView();
 				break;
@@ -160,11 +175,20 @@ public class MainSceneController {
 
 	}
 
+	public void updateCurrentSongPausedButton() {
+		currentSongPauseButton.setText(Main.musicController.isPaused() ? ">" : "||");
+	}
+
+	/*
+	 * ON UI ACTION METHODS
+	 */
+
 	@FXML void onBackButtonPressed() {
-		//TODO add SONGS
 		switch (actionsStack.pop()) {
 			case ALBUMS:
 				showAlbumsView();
+				break;
+			case SONGS:
 				break;
 			case ARTISTS:
 				showArtistsView();
@@ -176,16 +200,18 @@ public class MainSceneController {
 				showPlaylistsView();
 				break;
 			default:
-				System.out.println("- Went 'back' past the last view - showing albums");
+				System.out.println("- Went 'back' past the last view??");
 				showAlbumsView();
 				break;
 		}
 	}
 
-	//RIGHT SONG CONTROLS
+	@FXML void cyclePlayModeClicked() {
+		Main.musicController.cyclePlayMode();
+	}
+
 	@FXML void currentSongPauseClicked() {
 		Main.musicController.togglePaused();
-		currentSongPauseButton.setText(Main.musicController.isPaused() ? ">" : "||");
 	}
 
 	@FXML void currentSongSkipClicked() {
@@ -214,8 +240,13 @@ public class MainSceneController {
 		fillLibraryPane();
 	}
 
+	@FXML void clearQueuePressed() {
+		Main.musicController.clearQueue();
+	}
 
-	// BEHIND THE SCENES
+	/*
+	 * BEHIND THE SCENES
+	 */
 
 	void showSearchResultsView(String query) {
 		//basically just turns a query into an arraylist for showXview
@@ -307,8 +338,6 @@ public class MainSceneController {
 			vBox.getChildren().addAll(hBox);
 		}
 	}
-
-
 
 	void showArtistsView() {
 		showArtistsView(Artist.getAllFromDatabase());
@@ -433,4 +462,5 @@ public class MainSceneController {
 			tilePane.getChildren().addAll(vBox);
 		}
 	}
+
 }

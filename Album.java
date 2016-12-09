@@ -30,7 +30,7 @@ public class Album {
 	}
 
 	public String getPicture() {
-		return picture;
+		return picture != null ? picture : "resources/images/error.png";
 	}
 
 	public ArrayList<Song> getSongs() {

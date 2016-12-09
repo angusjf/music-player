@@ -23,7 +23,7 @@
                <children>
                   <HBox prefHeight="0.0" prefWidth="295.0" spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onBackButtonPressed" text="⬅︎">
+                        <Button mnemonicParsing="false" onAction="#onBackButtonPressed" text="&lt;-">
                            <tooltip>
                               <Tooltip text="Back" />
                            </tooltip>
@@ -31,7 +31,7 @@
                               <Insets />
                            </HBox.margin>
                         </Button>
-                        <ChoiceBox fx:id="viewsChoiceBox" onMouseClicked="#fillLibraryPane" prefHeight="27.0" prefWidth="128.0">
+                        <ChoiceBox fx:id="viewsChoiceBox" prefHeight="27.0" prefWidth="128.0">
                            <tooltip>
                               <Tooltip text="Choose View" />
                            </tooltip></ChoiceBox>
@@ -66,10 +66,17 @@
          <children>
             <VBox layoutX="16.0" layoutY="16.0" prefHeight="416.0" prefWidth="431.0" spacing="8.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Song">
-                     <font>
-                        <Font name="Roboto Regular" size="18.0" />
-                     </font></Text>
+                  <HBox spacing="2.0">
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Song">
+                           <font>
+                              <Font name="Roboto Regular" size="18.0" />
+                           </font>
+                        </Text>
+                        <Region prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#cyclePlayModeClicked" text="PlayMode" />
+                     </children>
+                  </HBox>
                   <VBox prefHeight="26.0" prefWidth="229.0">
                      <children>
                         <VBox style="-fx-border-radius: 1; -fx-border-color: #aaa; -fx-border-radius: 4;">
@@ -131,10 +138,17 @@
                         <Insets bottom="5.0" />
                      </padding>
                   </VBox>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Next Song">
-                     <font>
-                        <Font size="18.0" />
-                     </font></Text>
+                  <HBox>
+                     <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Next Song">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <Region prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" onAction="#clearQueuePressed" text="Clear Queue" />
+                     </children>
+                  </HBox>
                   <AnchorPane fx:id="queuePane" prefHeight="355.0" prefWidth="479.0" style="-fx-border-color: #aaa; -fx-border-width: 1; -fx-border-radius: 3;" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
