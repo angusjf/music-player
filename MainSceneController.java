@@ -45,9 +45,8 @@ public class MainSceneController {
 	@FXML private TextField searchBox;
 
 	public MainSceneController () {
-		System.out.println("+ Main Scene Controller class started");
 		// add first album to queue
-		Main.musicController.addToQueueEnd(Album.getAllFromDatabase().get(0));
+		Main.musicController.addToQueueEnd(Album.getAllFromDatabase().get(1));
 	}
 
 	public void setupStage(Stage stage, Scene scene) {
@@ -69,6 +68,7 @@ public class MainSceneController {
 	}
 
 	@FXML void initialize() {
+		System.out.println("+ Main Scene initialized");
 		try {
 			assert viewsChoiceBox != null		: "- viewsChoiceBox is null";
 			assert songNameText != null		: "- songNameText is null";
@@ -91,13 +91,19 @@ public class MainSceneController {
 		viewsChoiceBox.getSelectionModel().selectFirst();
 
 		//TODO VVVVVVVVV
-		//updateSongText(Main.musicController.getCurrentSong());//TODO make this update automatically
-		//updateTimeElapsed();//TODO same
+		updateSongText();//TODO make this update automatically
+
+		updateTimeElapsed();//TODO same
+		//timeElapsedtext.textProperty().bind(Main.musicController.getTimeElapsed());
+
+
+		//songProgressBar.  Main.musicController.setSeek(M
 
 		fillLibraryPane();
 	}
 
-	public void updateSongText(Song song) {
+	public void updateSongText() {
+		Song song = Main.musicController.getCurrentSong();
 		if (song == null) {
 			songNameText.setText("");
 			artistNameText.setText("");
@@ -113,11 +119,10 @@ public class MainSceneController {
 	}
 
 	public void updateTimeElapsed() {
-		timeElapsedtext.setText(Main.musicController.getTimeElapsed());
-	}
-
-	public void updateSongQueueContents() {
-		//songQueue.addAll(Main.musicController.getQueue().sublist(1, queue.size()));
+		if (Main.musicController.getCurrentSong() != null)
+			timeElapsedtext.setText(Main.musicController.getTimeElapsed());
+		else
+			timeElapsedtext.setText("");
 	}
 
 	public void fillLibraryPane() {
@@ -143,40 +148,42 @@ public class MainSceneController {
 		}
 
 	}
+	public void updateSongQueueContents() {
+		//songQueue.addAll(Main.musicController.getQueue().sublist(1, queue.size()));
+	}
 
+	//LEFT TOP BAR
 	@FXML void onBackButtonPressed() {
 		fillLibraryPane();
 	}
-
-	@FXML void currentSongPauseClicked() {
-		Main.musicController.togglePaused();
-
-		//Main.musicController.isPaused() ? currentSongPauseButton.setText(">") : currentSongPauseButton.setText("||");
-		//currentSongPauseButton.setText(">"); TODO
-	}
-
-	@FXML void openVisualiserClicked() {
-		Main.openVisualiser();
-	}
-
 	@FXML void onSearch() {
 		showSearchResultsView(searchBox.getText());
 	}
-
 	@FXML void newFileClicked() {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Choose a Music File");
 		List<File> list = fileChooser.showOpenMultipleDialog(stage);
+
 		if (list != null) {
 			for (File file : list) {
 				Song song = new Song(file);
 			}
 		}
 
-		System.out.println(">new file(s) added");
 		fillLibraryPane();
 	}
 
+	//RIGHT SONG CONTROLS
+	@FXML void currentSongPauseClicked() {
+		Main.musicController.togglePaused();
+		currentSongPauseButton.setText(Main.musicController.isPaused() ? ">" : "||");
+	}
+	@FXML void currentSongSkipClicked() {
+		Main.musicController.nextSong();
+	}
+	@FXML void openVisualiserClicked() {
+		Main.openVisualiser();
+	}
 
 	// BEHIND THE SCENES
 
@@ -234,12 +241,16 @@ public class MainSceneController {
 		}
 		for (Song song : songs) {
 			HBox hBox = new HBox();
+			Button playButton = new Button(">");
+			playButton.setOnAction(event -> Main.musicController.skipCurrentSongAndPlay(song));
+			Button addButton = new Button("+");
+			addButton.setOnAction(event -> Main.musicController.addToQueueEnd(song));
 			Text songNameText = new Text(song.toString() + " - ");
 			Text artistNameText = new Text(song.getArtist().toString());
 			Text featuresNamesText = new Text(song.getFeatures().size() != 0 ? " (ft. " + String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList())) + ") - " : " - ");
 			Text albumNameText = new Text(song.getAlbum().toString() + " - ");
 			Text songLengthText = new Text(song.getLength());
-			hBox.getChildren().addAll(songNameText, artistNameText, featuresNamesText, albumNameText, songLengthText);
+			hBox.getChildren().addAll(playButton, addButton, songNameText, artistNameText, featuresNamesText, albumNameText, songLengthText);
 			vBox.getChildren().addAll(hBox);
 		}
 	}

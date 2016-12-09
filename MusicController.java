@@ -11,10 +11,11 @@ enum PlayMode {
 class MusicController {
 
 	private ArrayList<Song> queue;
+
 	private boolean paused = true;
 	private PlayMode currentMode = PlayMode.ONCE;
 	private boolean shuffle = false;
-	private String timeElapsed = "0:00";//TODO
+
 	private MediaPlayer mediaPlayer;
 
 	public MusicController () {
@@ -23,18 +24,19 @@ class MusicController {
 
 	// SETTERS
 
+	//QUEUE
 	public void addToQueueEnd(Song song) {
 		queue.add(song);
+		//TODO update queue container
 	}
-
 	public void addToQueueEnd(Album album) {
 		for (Song song : album.getSongs()) {
-			queue.add(song);
+			addToQueueEnd(song);
 		}
 	}
 
 	public void addToQueueNext(Song song) {
-	
+		//TODO update queue
 	}
 
 	public void skipCurrentSongAndPlay(Song song) {
@@ -46,22 +48,22 @@ class MusicController {
 		queue.remove(0);
 		if (queue.size() > 0) { //checks there is a next song to play TODO
 			if (shuffle) {
-				//play(queue.get(Random.nextInt(queue.size() + 1)));
+				setSong(queue.get((int)(Math.random() * queue.size())));
 			} else {
-				//play(queue.get(0));
+				setSong(queue.get(0));
 			}
 		}
 	}
 
-	public void togglePaused() {
-		if (mediaPlayer == null) { //TODO
-			Media media = new Media(new File(queue.get(0).getFile()).toURI().toString());
-			mediaPlayer = new MediaPlayer(media);
-		}
 
-		paused = !paused;
-		if (paused) mediaPlayer.pause();
-		else mediaPlayer.play();
+	//PAUSE / PLAY
+
+	public void togglePaused() {
+		setPaused(!isPaused());
+	}
+	public void setPaused(boolean p) {
+		paused = p;
+		if (paused) pause(); else play();
 	}
 
 	public void toggleShuffle() {
@@ -84,23 +86,47 @@ class MusicController {
 		}
 	}
 
+	public void seekTo(float pos) {
+		//expect pos as a decimal 0 > 1 TODO
+		//mediaPlayer.seek(pos * mediaPlayer);
+	}
+
 	// GETTERS
 	
-	public boolean isPaused() {
-		return paused;
+	public boolean isPaused() { return paused; }
+
+	public Song getCurrentSong() { return queue.get(0); }
+
+	public String getTimeElapsed() { return mediaPlayer != null ? mediaPlayer.currentTimeProperty().toString() : ""; }
+
+	public ArrayList<Song> getQueue() { return queue; }
+
+
+	//INTERNAL METHODS (only mention of mediaPlayer should be here
+
+	private void setSong(Song song) {
+		Media media = new Media(new File(song.getFile()).toURI().toString());
+		if (mediaPlayer != null) mediaPlayer.stop();
+		mediaPlayer = new MediaPlayer(media);
+		setPaused(false);
+	}
+	
+	private void play() {
+		if (mediaPlayer != null)
+ 			mediaPlayer.play();
+		else
+			setSong(queue.get(0));
 	}
 
-	public Song getCurrentSong() {
-		return queue.get(0);
+	private void pause() {
+		if (mediaPlayer != null)
+ 			mediaPlayer.pause();
 	}
 
-	public String getTimeElapsed() {
-		return timeElapsed;
-	}
 
-	public ArrayList<Song> getQueue() {
-		return queue;
-	}
+//}
+
+	//NASTY VISUALISER STUFF
 
 	double t = 0;//TODO
 	public double getFrequency (double n) {
@@ -111,7 +137,4 @@ class MusicController {
 		return (Math.sin(n + t) + 1 ) / 2;
 	}
 
-	//INTERNAL METHODS
-
-	
 }

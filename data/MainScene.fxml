@@ -39,7 +39,7 @@
                            <tooltip>
                               <Tooltip text="Import a new track into your library" />
                            </tooltip></Button>
-                        <Region disable="true" minHeight="0.0" minWidth="8.0" prefHeight="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+                        <Region disable="true" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
                         <TextField fx:id="searchBox" onAction="#onSearch" prefHeight="33.0" prefWidth="167.0" promptText="Search..." snapToPixel="false">
                            <rotationAxis>
                               <Point3D />
@@ -84,15 +84,7 @@
                                           <Tooltip text="Toggle paused" />
                                        </tooltip>
                                     </Button>
-                                    <Button mnemonicParsing="false" text="+">
-                                       <tooltip>
-                                          <Tooltip text="Add to up next" />
-                                       </tooltip>
-                                       <font>
-                                          <Font name="System Bold" size="13.0" />
-                                       </font>
-                                    </Button>
-                                    <Button mnemonicParsing="false" prefHeight="27.0" prefWidth="113.0" text="Skip">
+                                    <Button mnemonicParsing="false" onAction="#currentSongSkipClicked" prefHeight="27.0" prefWidth="93.0" text="Skip">
                                        <tooltip>
                                           <Tooltip text="Stop" />
                                        </tooltip>
