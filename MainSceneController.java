@@ -35,8 +35,8 @@ public class MainSceneController {
 	private Stage stage;
 
 	@FXML private AnchorPane libraryPane, queuePane;
-	@FXML private Button backButton, playModeButton, currentSongPauseButton, currentSongSkipButton, visualiseButton;
-	@FXML private Text albumNameText, artistNameText, featuresNamesText, songLengthText, songNameText, timeElapsedtext, clearQueueButton;
+	@FXML private Button backButton, playModeButton, currentSongPauseButton, currentSongSkipButton, visualiseButton, clearQueueButton;
+	@FXML private Text albumNameText, artistNameText, featuresNamesText, songLengthText, songNameText, timeElapsedtext;
 	@FXML private TextField searchBox;
 	@FXML private ChoiceBox viewsChoiceBox;
 	@FXML private Slider songProgressBar;
@@ -132,6 +132,8 @@ public class MainSceneController {
 		for (Song song : queue) {
 			vBox.getChildren().addAll(generateSongBox(song));
 		}
+		updateClearQueueButtonEnabled(queue.size() > 0);
+		updateSkipButtonEnabled(queue.size() > 0);
 	}
 
 	public void fillLibraryPane() {
@@ -182,6 +184,9 @@ public class MainSceneController {
 		clearQueueButton.setDisable(!enabled);
 	}
 
+	public void updatePlayModeButtonText(String text) {
+		playModeButton.setText(text);
+	}
 
 	/*
 	 * ON UI ACTION METHODS

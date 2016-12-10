@@ -3,9 +3,10 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.File;
 import javafx.scene.media.EqualizerBand;
+import javafx.util.Duration;
 
 enum PlayMode {
-	ONCE, CYCLE, SINGLE
+	REPEAT, CYCLE, SINGLE
 }
 
 class MusicController {
@@ -13,12 +14,13 @@ class MusicController {
 	private ArrayList<Song> queue;
 
 	private boolean paused = true;
-	private PlayMode currentMode = PlayMode.ONCE;
+	private PlayMode currentMode;
 	private boolean shuffle = false;
 
 	private MediaPlayer mediaPlayer;
 
 	public MusicController () {
+		// TODO setCurrentMode(PlayMode.REPEAT);
 		queue = new ArrayList<Song>();
 	}
 
@@ -31,6 +33,7 @@ class MusicController {
 	public void addToQueueEnd(Song song) {
 		queue.add(song);
 		Main.mainSceneController.updateSongQueueContents();
+		Main.mainSceneController.updatePlayButtonEnabled(true);
 	}
 
 	public void addToQueueEnd(Album album) {
@@ -45,6 +48,7 @@ class MusicController {
 		} else {
 			queue.add(1, song);
 		}
+		Main.mainSceneController.updatePlayButtonEnabled(queue.size() > 0);
 		Main.mainSceneController.updateSongQueueContents();
 	}
 
@@ -55,9 +59,22 @@ class MusicController {
 		setPaused(false);
 	}
 
+	public void onSongEnd() {
+		System.out.println("!!! SONG END");
+		if (currentMode == PlayMode.REPEAT) {
+			seekTo(0);
+		} else if (currentMode == PlayMode.CYCLE) {
+			//TODO
+			nextSong();
+		} else {
+			nextSong();
+		}
+	}
+
 	public void nextSong() {
 		if (queue.size() > 0) {
 			queue.remove(0);
+			Main.mainSceneController.updatePlayButtonEnabled(false);
 			Main.mainSceneController.updateSongQueueContents();
 		}
 
@@ -68,7 +85,10 @@ class MusicController {
 				setSong(queue.get(0));
 			}
 		} else {
-			setSong();
+			if (currentMode == PlayMode.CYCLE)
+				setSong();
+			else
+				setSong();
 		}
 	}
 
@@ -101,23 +121,40 @@ class MusicController {
 
 	public void cyclePlayMode() {
 		switch (currentMode) {
-			case ONCE:
-				currentMode = PlayMode.CYCLE;
+			case REPEAT:
+				setCurrentMode(PlayMode.CYCLE);
 				break;
 			case CYCLE:
-				currentMode = PlayMode.SINGLE;
+				setCurrentMode(PlayMode.SINGLE);
 				break;
 			case SINGLE:
-				currentMode = PlayMode.ONCE;
+				setCurrentMode(PlayMode.REPEAT);
 				break;
 			default:
 				break;
 		}
 	}
 
-	public void seekTo(float pos) {
+	private void setCurrentMode(PlayMode mode) {
+		currentMode = mode;
+		switch (mode) {
+			case REPEAT:
+				Main.mainSceneController.updatePlayModeButtonText("Repeat");
+				break;
+			case CYCLE:
+				Main.mainSceneController.updatePlayModeButtonText("Cycle");
+				break;
+			case SINGLE:
+				Main.mainSceneController.updatePlayModeButtonText("Single");
+				break;
+			default:
+				break;
+		}
+	}
+
+	public void seekTo(double pos) {
 		//expect pos as a decimal 0 > 1 TODO
-		//mediaPlayer.seek(pos * mediaPlayer);
+		mediaPlayer.seek(new Duration(pos));
 	}
 
 	/*
@@ -140,6 +177,7 @@ class MusicController {
 		Media media = new Media(new File(song.getFile()).toURI().toString());
 		if (mediaPlayer != null) mediaPlayer.stop();
 		mediaPlayer = new MediaPlayer(media);
+		mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
 		setPaused(false);
 	}
 
