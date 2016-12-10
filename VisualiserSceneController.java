@@ -15,7 +15,7 @@ class VisualiserSceneController {
 	//backgroundColor;
 	//foregroundColor;
 
-	final int noOfBars = (int)(Math.random() * 50);
+	final int noOfBars = 128;
 
 	private double[] bars = new double[noOfBars];
 
@@ -54,7 +54,7 @@ class VisualiserSceneController {
 
 	private void update() {
 		for (int i = 0; i < noOfBars; i++) {
-			bars[i] = getHeight((double)i/(noOfBars-1));
+			bars[i] = getHeight(i);
 		}
 	}
 
@@ -76,13 +76,12 @@ class VisualiserSceneController {
 		gc.fillRect(0, 0, WIDTH, HEIGHT);
 	}
 
-	private double getHeight(double n) {
-		System.out.println(Main.musicController.getFrequency(n) * HEIGHT);
-		return Main.musicController.getFrequency(n) * HEIGHT;
+	private double getHeight(int n) {
+		height = Main.musicController.getVolumeOfFrequency(n) * HEIGHT * 480;
+		return height;
 	}
 
 	private double lerp(double a, double b, double t) {
  		return a * (1-t) + (b*t);
 	}
-
 }

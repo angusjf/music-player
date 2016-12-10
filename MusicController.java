@@ -4,9 +4,23 @@ import javafx.scene.media.MediaPlayer;
 import java.io.File;
 import javafx.scene.media.EqualizerBand;
 import javafx.util.Duration;
+import javafx.scene.media.AudioSpectrumListener;
 
 enum PlayMode {
 	REPEAT, CYCLE, SINGLE
+}
+
+class AngusListener implements AudioSpectrumListener {
+
+	public float[] magnitudes;
+
+	public AngusListener() {
+		magnitudes = new float[128];
+	}
+
+	public void spectrumDataUpdate(double timestamp, double duration, float[] magnitudes, float[] phases) {
+		this.magnitudes = magnitudes;
+	}
 }
 
 class MusicController {
@@ -18,10 +32,12 @@ class MusicController {
 	private boolean shuffle = false;
 
 	private MediaPlayer mediaPlayer;
+	private AngusListener asl;
 
 	public MusicController () {
 		// TODO setCurrentMode(PlayMode.REPEAT);
 		queue = new ArrayList<Song>();
+		asl = new AngusListener();
 	}
 
 	/*
@@ -178,6 +194,7 @@ class MusicController {
 		if (mediaPlayer != null) mediaPlayer.stop();
 		mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
+		mediaPlayer.setAudioSpectrumListener(asl);
 		setPaused(false);
 	}
 
@@ -203,13 +220,9 @@ class MusicController {
 	 * NASTY VISUALISER STUFF
 	 */
 
-	double t = 0;//TODO
-	public double getFrequency (double n) {
-		//frequencies[i] = (double)mediaPlayer.getAudioEqualizer().getBands().get(i).getCenterFrequency(); TODO
-
-		t -= 0.0001; //TODO
-
-		return (Math.sin(n + t) + 1 ) / 2;
+	//double t = 0;//TODO
+	public float getVolumeOfFrequency (int n) {
+		return asl.magnitudes[n] / -28000;
 	}
 
 }

@@ -96,6 +96,8 @@ public class MainSceneController {
 
 		//timeElapsedtext.textProperty().bind(Main.musicController.getTimeElapsed()); 
 		//songProgressBar.  Main.musicController.setSeek(M
+
+		updateVisualiseButtonEnabled(true);
 	}
 
 	/*
