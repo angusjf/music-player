@@ -127,8 +127,10 @@ public class MainSceneController {
 
 	public void updateSongQueueContents() {
 		List<Song> queue = Main.musicController.getQueue().subList(1, Main.musicController.getQueue().size());
+		VBox vBox = new VBox();
+		queuePane.getChildren().setAll(vBox);
 		for (Song song : queue) {
-			queuePane.getChildren().addAll(generateSongBox(song));
+			vBox.getChildren().addAll(generateSongBox(song));
 		}
 	}
 
@@ -372,6 +374,7 @@ public class MainSceneController {
 		vBox.setPadding(new Insets(4));
 		vBox.setSpacing(4);
 
+		System.out.println(album.getPicture());
 		ImageView image = new ImageView(album.getPicture());
 		image.setFitHeight(142);
 		image.setFitWidth(142);

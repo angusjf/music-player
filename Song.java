@@ -137,7 +137,6 @@ public class Song {
 		return null;
 	}
 
-
 	public static ArrayList<Song> getAllFromDatabase() {
 		ArrayList<Song> all = new ArrayList<Song>();
 

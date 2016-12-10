@@ -14,7 +14,7 @@ public class Album {
 		this.genreId = genreId;
 		this.title = title;
 		this.year = year;
-		this.picture = "resources/images/albums/" + picture;
+		this.picture = picture;
 	}
 
 	public int getId() {
@@ -30,7 +30,7 @@ public class Album {
 	}
 
 	public String getPicture() {
-		return picture != null ? picture : "resources/images/error.png";
+		return picture != null ? "resources/images/albums/" + picture : "resources/images/error.png";
 	}
 
 	public ArrayList<Song> getSongs() {

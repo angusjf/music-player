@@ -12,7 +12,7 @@ class Artist {
 	public Artist(int id, String name, String picture) {
 		this.id = id;
 		this.name = name;
-		this.picture = "resources/images/artists/" + picture;
+		this.picture = picture;
 	}
 
 	public int getId() {
@@ -24,7 +24,7 @@ class Artist {
 	}
 
 	public String getPicture() {
-		return picture != null ? picture : "resources/images/error.png";
+		return picture != null ? "resources/images/artists/" + picture : "resources/images/error.png";
 	}
 
 	public ArrayList<Album> getAlbums() {
