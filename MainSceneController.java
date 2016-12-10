@@ -28,34 +28,20 @@ import java.util.Stack;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-enum LibraryView {
-	ALBUMS, SONGS, ARTISTS, GENRES, PLAYLISTS
-}
-
 public class MainSceneController {
 
 	final String SCENE_TITLE = "Music Player";
 	final int MIN_HEIGHT = 400, MIN_WIDTH = 600;
 	private Stage stage;
-	private Stack<LibraryView> actionsStack;
 
-	@FXML private ChoiceBox viewsChoiceBox;
-	@FXML private Text songNameText;
-	@FXML private Text artistNameText;
-	@FXML private Text featuresNamesText;
-	@FXML private Text albumNameText;
-	@FXML private Text timeElapsedtext;
-	@FXML private Slider songProgressBar;
-	@FXML private Text songLengthText;
-	@FXML private Button currentSongPauseButton;
-	@FXML private AnchorPane libraryPane;
-	@FXML private AnchorPane queuePane;
+	@FXML private AnchorPane libraryPane, queuePane;
+	@FXML private Button backButton, playModeButton, currentSongPauseButton, currentSongSkipButton, visualiseButton;
+	@FXML private Text albumNameText, artistNameText, featuresNamesText, songLengthText, songNameText, timeElapsedtext, clearQueueButton;
 	@FXML private TextField searchBox;
+	@FXML private ChoiceBox viewsChoiceBox;
+	@FXML private Slider songProgressBar;
 
-	public MainSceneController () {
-		// add first album to queue
-		actionsStack = new Stack<LibraryView>();
-	}
+	public MainSceneController () { }
 
 	public void setupStage(Stage stage, Scene scene) {
 		this.stage = stage;
@@ -140,14 +126,10 @@ public class MainSceneController {
 	}
 
 	public void updateSongQueueContents() {
-		List<Song> queue = Main.musicController.getQueue();
-		String out = "queue is: ";
-		//if (queue.size() > 1) {
-			//out += queue.subList(1, queue.size());
-		//} else {
-			out += queue.toString();
-		//}
-		System.out.println(out);
+		List<Song> queue = Main.musicController.getQueue().subList(1, Main.musicController.getQueue().size());
+		for (Song song : queue) {
+			queuePane.getChildren().addAll(generateSongBox(song));
+		}
 	}
 
 	public void fillLibraryPane() {
@@ -172,35 +154,56 @@ public class MainSceneController {
 				System.out.println("- unknown viewsChoiceBox item");
 				break;
 		}
-
 	}
 
 	public void updateCurrentSongPausedButton() {
 		currentSongPauseButton.setText(Main.musicController.isPaused() ? ">" : "||");
 	}
 
+	public void updateBackButtonEnabled(boolean enabled) {
+		backButton.setDisable(!enabled);
+	}
+
+	public void updatePlayButtonEnabled(boolean enabled) {
+		currentSongPauseButton.setDisable(!enabled);
+	}
+
+	public void updateSkipButtonEnabled(boolean enabled) {
+		currentSongSkipButton.setDisable(!enabled);
+	}
+
+	public void updateVisualiseButtonEnabled(boolean enabled) {
+		visualiseButton.setDisable(!enabled);
+	}
+
+	public void updateClearQueueButtonEnabled(boolean enabled) {
+		clearQueueButton.setDisable(!enabled);
+	}
+
+
 	/*
 	 * ON UI ACTION METHODS
 	 */
 
 	@FXML void onBackButtonPressed() {
-		switch (actionsStack.pop()) {
-			case ALBUMS:
+		updateBackButtonEnabled(false);
+		switch (viewsChoiceBox.getSelectionModel().getSelectedItem().toString()) {
+			case "Albums":
 				showAlbumsView();
 				break;
-			case SONGS:
+			case "Songs":
 				break;
-			case ARTISTS:
+			case "Artists":
 				showArtistsView();
 				break;
-			case GENRES:
+			case "Genres":
 				showGenresView();
 				break;
-			case PLAYLISTS:
+			case "Playlists":
 				showPlaylistsView();
 				break;
 			default:
-				System.out.println("- Went 'back' past the last view??");
+				System.out.println("- went 'back' past the last view??");
 				showAlbumsView();
 				break;
 		}
@@ -250,25 +253,24 @@ public class MainSceneController {
 
 	void showSearchResultsView(String query) {
 		//basically just turns a query into an arraylist for showXview
-		switch (actionsStack.peek()) {
-			case ALBUMS:
+		switch (viewsChoiceBox.getSelectionModel().getSelectedItem().toString()) {
+			case "Albums":
 				showAlbumsView(Album.getAllFromDatabase().stream().filter(s -> s.toString().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList()));
 				break;
-			case SONGS:
+			case "Songs":
 				showSongsView("Search Results for query '" + query + "'", Song.getAllFromDatabase().stream().filter(s -> s.toString().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList()));
 				break;
-			case ARTISTS:
+			case "Artists":
 				showArtistsView(Artist.getAllFromDatabase().stream().filter(s -> s.toString().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList()));
 				break;
-			case GENRES:
+			case "Genres":
 				showGenresView(Genre.getAllFromDatabase().stream().filter(s -> s.toString().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList()));
 				break;
-			case PLAYLISTS:
+			case "Playlists":
 				showPlaylistsView(Playlist.getAllFromDatabase().stream().filter(s -> s.toString().toLowerCase().contains(query.toLowerCase())).collect(Collectors.toList()));
 				break;
 			default:
 				System.out.println("- !!!! SOMETHING WENT VERY WRONG IN THE SEARCH");
-				showAlbumsView();
 				break;
 		}
 	}
@@ -278,40 +280,16 @@ public class MainSceneController {
 	}
 
 	void showAlbumsView(List<Album> albums) {
-		actionsStack.push(LibraryView.ALBUMS);
-
 		libraryPane.getChildren().clear();
 		TilePane tilePane = new TilePane();
 		libraryPane.getChildren().addAll(tilePane);
 
 		for (Album album : albums) {
-			VBox vBox = new VBox();
-			vBox.setPadding(new Insets(4));
-			vBox.setSpacing(4);
-
-			ImageView image = new ImageView(album.getPicture());
-			image.setFitHeight(142);
-			image.setFitWidth(142);
-			Text name = new Text(album.toString());
-			Text artist = new Text(album.getArtist().toString());
-			//artist.setFill(Color.GREY); TODO
-
-			//album.setOnAction((ActionEvent ae) -> showSongsView(album.getSongs()));
-			vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-				@Override public void handle(MouseEvent event) {
-					showSongsView(album.toString(), album.getSongs());
-					event.consume();
-				}
-			});
-
-			vBox.getChildren().addAll(image, name, artist);
-			tilePane.getChildren().addAll(vBox);
+			tilePane.getChildren().addAll(generateAlbumBox(album));
 		}
 	}
 
 	void showSongsView() {
-		actionsStack.push(LibraryView.SONGS);
-		//just overloaded to show all songs
 		showSongsView("All Songs", Song.getAllFromDatabase());
 	}
 
@@ -324,18 +302,7 @@ public class MainSceneController {
 			vBox.getChildren().addAll(new Text("No songs found!"));
 		}
 		for (Song song : songs) {
-			HBox hBox = new HBox();
-			Button playButton = new Button(">");
-			playButton.setOnAction(event -> Main.musicController.skipCurrentSongAndPlay(song));
-			Button addButton = new Button("+");
-			addButton.setOnAction(event -> Main.musicController.addToQueueEnd(song));
-			Text songNameText = new Text(song.toString() + " - ");
-			Text artistNameText = new Text(song.getArtist().toString());
-			Text featuresNamesText = new Text(song.getFeatures().size() != 0 ? " (ft. " + String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList())) + ") - " : " - ");
-			Text albumNameText = new Text(song.getAlbum().toString() + " - ");
-			Text songLengthText = new Text(song.getLength());
-			hBox.getChildren().addAll(playButton, addButton, songNameText, artistNameText, featuresNamesText, albumNameText, songLengthText);
-			vBox.getChildren().addAll(hBox);
+			vBox.getChildren().addAll(generateSongBox(song));
 		}
 	}
 
@@ -344,36 +311,12 @@ public class MainSceneController {
 	}
 
 	void showArtistsView(List<Artist> artists) {
-		actionsStack.push(LibraryView.ARTISTS);
-
 		libraryPane.getChildren().clear();
 		TilePane tilePane = new TilePane();
 		libraryPane.getChildren().addAll(tilePane);
 
 		for (Artist artist : artists) {
-			VBox vBox = new VBox();
-			vBox.setPadding(new Insets(4));
-			vBox.setSpacing(4);
-
-			ImageView image = new ImageView(artist.getPicture());
-			image.setFitHeight(142);
-			image.setFitWidth(142);
-			Text name = new Text(artist.toString());
-
-			vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-				@Override public void handle(MouseEvent event) {
-					//TODO could this be better?
-					List<Song> allSongs = new ArrayList<>();
-					for (Album a : artist.getAlbums()) {
-						allSongs.addAll(a.getSongs());
-					}
-					showSongsView(artist.toString(), allSongs);
-					event.consume();
-				}
-			});
-
-			vBox.getChildren().addAll(image, name);
-			tilePane.getChildren().addAll(vBox);
+			tilePane.getChildren().addAll(generateArtistBox(artist));
 		}
 	}
 
@@ -382,41 +325,12 @@ public class MainSceneController {
 	}
 
 	void showGenresView(List<Genre> genres) {
-		actionsStack.push(LibraryView.GENRES);
-
 		libraryPane.getChildren().clear();
 		TilePane tilePane = new TilePane();
 		libraryPane.getChildren().addAll(tilePane);
 
 		for (Genre genre : genres) {
-			VBox vBox = new VBox();
-			vBox.setPadding(new Insets(4));
-			vBox.setSpacing(4);
-
-			TilePane imageBox = new TilePane();
-			imageBox.setPrefTileHeight(64);
-			imageBox.setPrefTileWidth(64);
-
-			for (int i = 0; i < Math.min(4, genre.getSongs().size()); i++) {
-				ImageView im = new ImageView(genre.getSongs().get(i).getAlbum().getPicture());
-				im.setFitHeight(64);
-				im.setFitWidth(64);
-				imageBox.getChildren().addAll(im);
-			}
-
-			Text name = new Text(genre.toString());
-			Text soungCount = new Text(Integer.toString(genre.getSongs().size()) + " songs");
-			//artist.setFill(Color.GREY); TODO
-
-			vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-				@Override public void handle(MouseEvent event) {
-					showSongsView(genre.toString(), genre.getSongs());
-					event.consume();
-				}
-			});
-
-			vBox.getChildren().addAll(imageBox, name, soungCount);
-			tilePane.getChildren().addAll(vBox);
+			tilePane.getChildren().addAll(generateGenreBox(genre));
 		}
 	}
 
@@ -425,42 +339,143 @@ public class MainSceneController {
 	}
 
 	void showPlaylistsView(List<Playlist> playlists) {
-		actionsStack.push(LibraryView.PLAYLISTS);
-
 		libraryPane.getChildren().clear();
 		TilePane tilePane = new TilePane();
 		libraryPane.getChildren().addAll(tilePane);
 
 		for (Playlist playlist : playlists) {
-			VBox vBox = new VBox();
-			vBox.setPadding(new Insets(4));
-			vBox.setSpacing(4);
-
-			TilePane imageBox = new TilePane();
-			imageBox.setPrefTileHeight(64);
-			imageBox.setPrefTileWidth(64);
-
-			for (int i = 0; i < Math.min(4, playlist.getSongs().size()); i++) {
-				ImageView im = new ImageView(playlist.getSongs().get(i).getAlbum().getPicture());
-				im.setFitHeight(64);
-				im.setFitWidth(64);
-				imageBox.getChildren().addAll(im);
-			}
-
-			Text name = new Text(playlist.toString());
-			Text soungCount = new Text(Integer.toString(playlist.getSongs().size()) + " songs");
-			//artist.setFill(Color.GREY); TODO
-
-			vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-				@Override public void handle(MouseEvent event) {
-					showSongsView(playlist.toString(), playlist.getSongs());
-					event.consume();
-				}
-			});
-
-			vBox.getChildren().addAll(imageBox, name, soungCount);
-			tilePane.getChildren().addAll(vBox);
+			tilePane.getChildren().addAll(generatePlaylistBox(playlist));
 		}
+	}
+
+	/*
+	 * BOX GENERATORS
+	 */
+
+	HBox generateSongBox(Song song) {
+		HBox hBox = new HBox();
+		Button playButton = new Button(">");
+		playButton.setOnAction(event -> Main.musicController.skipCurrentSongAndPlay(song));
+		Button addButton = new Button("+");
+		addButton.setOnAction(event -> Main.musicController.addToQueueEnd(song));
+		Text songNameText = new Text(song.toString() + " - ");
+		Text artistNameText = new Text(song.getArtist().toString());
+		Text featuresNamesText = new Text(song.getFeatures().size() != 0 ? " (ft. " + String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList())) + ") - " : " - ");
+		Text albumNameText = new Text(song.getAlbum().toString() + " - ");
+		Text songLengthText = new Text(song.getLength());
+		hBox.getChildren().addAll(playButton, addButton, songNameText, artistNameText, featuresNamesText, albumNameText, songLengthText);
+		return hBox;
+	}
+
+	VBox generateAlbumBox(Album album) {
+		VBox vBox = new VBox();
+		vBox.setPadding(new Insets(4));
+		vBox.setSpacing(4);
+
+		ImageView image = new ImageView(album.getPicture());
+		image.setFitHeight(142);
+		image.setFitWidth(142);
+		Text name = new Text(album.toString());
+		Text artist = new Text(album.getArtist().toString());
+		//artist.setFill(Color.GREY); TODO
+
+		//album.setOnAction((ActionEvent ae) -> showSongsView(album.getSongs()));
+		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override public void handle(MouseEvent event) {
+				showSongsView(album.toString(), album.getSongs());
+				event.consume();
+			}
+		});
+
+		vBox.getChildren().addAll(image, name, artist);
+		return vBox;
+	}
+
+	VBox generateArtistBox(Artist artist) {
+		VBox vBox = new VBox();
+		vBox.setPadding(new Insets(4));
+		vBox.setSpacing(4);
+
+		ImageView image = new ImageView(artist.getPicture());
+		image.setFitHeight(142);
+		image.setFitWidth(142);
+		Text name = new Text(artist.toString());
+
+		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override public void handle(MouseEvent event) {
+				//TODO could this be better?
+				List<Song> allSongs = new ArrayList<>();
+				for (Album a : artist.getAlbums()) {
+					allSongs.addAll(a.getSongs());
+				}
+				showSongsView(artist.toString(), allSongs);
+				event.consume();
+			}
+		});
+
+		vBox.getChildren().addAll(image, name);
+		return vBox;
+	}
+
+	VBox generateGenreBox(Genre genre) {
+		VBox vBox = new VBox();
+		vBox.setPadding(new Insets(4));
+		vBox.setSpacing(4);
+
+		TilePane imageBox = new TilePane();
+		imageBox.setPrefTileHeight(64);
+		imageBox.setPrefTileWidth(64);
+
+		for (int i = 0; i < Math.min(4, genre.getSongs().size()); i++) {
+			ImageView im = new ImageView(genre.getSongs().get(i).getAlbum().getPicture());
+			im.setFitHeight(64);
+			im.setFitWidth(64);
+			imageBox.getChildren().addAll(im);
+		}
+
+		Text name = new Text(genre.toString());
+		Text soungCount = new Text(Integer.toString(genre.getSongs().size()) + " songs");
+		//artist.setFill(Color.GREY); TODO
+
+		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override public void handle(MouseEvent event) {
+				showSongsView(genre.toString(), genre.getSongs());
+				event.consume();
+			}
+		});
+
+		vBox.getChildren().addAll(imageBox, name, soungCount);
+		return vBox;
+	}
+
+	VBox generatePlaylistBox(Playlist playlist) {
+		VBox vBox = new VBox();
+		vBox.setPadding(new Insets(4));
+		vBox.setSpacing(4);
+
+		TilePane imageBox = new TilePane();
+		imageBox.setPrefTileHeight(64);
+		imageBox.setPrefTileWidth(64);
+
+		for (int i = 0; i < Math.min(4, playlist.getSongs().size()); i++) {
+			ImageView im = new ImageView(playlist.getSongs().get(i).getAlbum().getPicture());
+			im.setFitHeight(64);
+			im.setFitWidth(64);
+			imageBox.getChildren().addAll(im);
+		}
+
+		Text name = new Text(playlist.toString());
+		Text soungCount = new Text(Integer.toString(playlist.getSongs().size()) + " songs");
+		//artist.setFill(Color.GREY); TODO
+
+		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override public void handle(MouseEvent event) {
+				showSongsView(playlist.toString(), playlist.getSongs());
+				event.consume();
+			}
+		});
+		vBox.getChildren().addAll(imageBox, name, soungCount);
+		return vBox;
 	}
 
 }

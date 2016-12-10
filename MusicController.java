@@ -152,7 +152,7 @@ class MusicController {
 	private void play() {
 		if (mediaPlayer != null)
  			mediaPlayer.play();
-		else
+		else if (queue.size() > 0)
 			setSong(queue.get(0));
 	}
 
@@ -163,7 +163,7 @@ class MusicController {
 
 	/*
 	 * NASTY VISUALISER STUFF
-	*/
+	 */
 
 	double t = 0;//TODO
 	public double getFrequency (double n) {
