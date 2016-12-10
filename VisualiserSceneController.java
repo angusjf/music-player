@@ -23,7 +23,6 @@ class VisualiserSceneController {
 		System.out.println("+ VisualiserSceneController Scene Controller class started");
 		
 		new AnimationTimer() {
-			@Override
 			public void handle(long now) {
 				update();
 				draw();
@@ -54,30 +53,34 @@ class VisualiserSceneController {
 
 	private void update() {
 		for (int i = 0; i < noOfBars; i++) {
-			bars[i] = getHeight(i);
+			bars[i] = lerp(bars[i], getHeight(i), 0.5);
 		}
 	}
 
+	int tick = 0;
 	private void draw() {
 		clear();
-		gc.setFill(Color.rgb(100,200,240));
+		//text and picture
 		for (int i = 0; i < bars.length; i++) {
+			gc.setFill(Color.hsb(i*360/bars.length + tick, 1, 1));
 			gc.fillRect(
-				Math.round(((double)i / (double)noOfBars) * WIDTH) *2 ,
-				HEIGHT - bars[i],
+				Math.round(((double)i / (double)noOfBars) * WIDTH) * 2 + 2,
+				(HEIGHT - bars[i]) - HEIGHT * 0.5 + bars[i] * 0.5,
 				WIDTH/noOfBars,
 				bars[i]
-			);
+			);//reflecton mmode??
 		}
+		tick -= 2;
 	}
 
 	private void clear() {
-		gc.setFill(Color.rgb(230,250,230));
+		gc.setFill(Color.rgb(12,12,12));
 		gc.fillRect(0, 0, WIDTH, HEIGHT);
 	}
 
 	private double getHeight(int n) {
-		height = Main.musicController.getVolumeOfFrequency(n) * HEIGHT * 480;
+		double height;
+		height = Main.musicController.getMagnitudeOfFrequency(n) * HEIGHT;
 		return height;
 	}
 

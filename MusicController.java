@@ -221,8 +221,14 @@ class MusicController {
 	 */
 
 	//double t = 0;//TODO
-	public float getVolumeOfFrequency (int n) {
-		return asl.magnitudes[n] / -28000;
+	public float getMagnitudeOfFrequency (int n) {
+		if (isPaused())
+			return 0;
+		float mag = asl.magnitudes[n];
+		mag *= -1;
+		mag = 60 - mag;
+		mag /= 60;
+		return mag;
 	}
 
 }
