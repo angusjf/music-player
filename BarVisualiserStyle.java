@@ -44,4 +44,8 @@ public class BarVisualiserStyle implements VisualiserStyle {
 		);
 	}
 
+	public String toString() {
+		return "Rainbow Bars";
+	}
+
 }

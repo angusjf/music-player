@@ -37,9 +37,9 @@ public class GraphVisualiserStyle implements VisualiserStyle {
 		gc.setLineWidth(2);
 		gc.strokeLine(
 			Math.round(((double)(barNo-1) / (double)bars.length) * VisualiserSceneController.WIDTH) * 2 + 6*VisualiserSceneController.SCALE,
-			VisualiserSceneController.HEIGHT - lastHeight - 3,
+			VisualiserSceneController.HEIGHT - lastHeight - 5,
 			Math.round(((double)(barNo) / (double)bars.length) * VisualiserSceneController.WIDTH) * 2 + 6*VisualiserSceneController.SCALE,
-			VisualiserSceneController.HEIGHT - height - 3
+			VisualiserSceneController.HEIGHT - height - 5
 		);
 		lastHeight = height;
 	}
@@ -61,5 +61,9 @@ public class GraphVisualiserStyle implements VisualiserStyle {
 		else lastHeight2 = height;
 	}
     */
+
+	public String toString() {
+		return "Line Graph";
+	}
 
 }

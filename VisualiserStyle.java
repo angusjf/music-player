@@ -5,5 +5,6 @@ public interface VisualiserStyle {
 
     public Color getBackgroundColor();
     public void draw();
+    public String toString();
 
 }

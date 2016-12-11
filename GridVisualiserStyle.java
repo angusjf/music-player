@@ -37,4 +37,8 @@ public class GridVisualiserStyle implements VisualiserStyle {
 
 	}
 
+	public String toString() {
+		return "Grid";
+	}
+
 }

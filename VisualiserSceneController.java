@@ -16,7 +16,7 @@ class VisualiserSceneController {
 
 	public VisualiserSceneController() {
 
-		Canvas canvas = new Canvas(WIDTH, HEIGHT);
+		Canvas canvas = new Canvas(WIDTH * 2, HEIGHT);
 		gc = canvas.getGraphicsContext2D();
 
 		Group root = new Group();
@@ -38,11 +38,14 @@ class VisualiserSceneController {
 			}
 		}.start();
 
-		visualiser = new GraphVisualiserStyle(gc);//TODO
+		//VisualiserStyle[] //TODO also toString
+
+		visualiser = new BarVisualiserStyle(gc);//TODO
 	}
 
 	public void show() {
 		stage.show();
+		stage.toFront();
 	}
 
 	public void hide() {
