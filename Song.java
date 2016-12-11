@@ -137,6 +137,19 @@ public class Song {
 		return null;
 	}
 
+	public void removeFromDatabase() {
+		//TODO
+		PreparedStatement statement = Main.database.createStatement("DELETE FROM SONGS WHERE Id = ?");
+		try {
+			statement.setInt(1, id);
+		} catch (SQLException ex) {
+			System.out.println("- setting ? error");
+		}
+		assert statement != null;
+
+		Main.database.runUpdateStatement(statement);
+	}
+
 	public static ArrayList<Song> getAllFromDatabase() {
 		ArrayList<Song> all = new ArrayList<Song>();
 

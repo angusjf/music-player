@@ -36,7 +36,7 @@ class VisualiserSceneController {
 		stage.setWidth(WIDTH);
 		stage.setHeight(HEIGHT+22);
 		stage.setTitle("Visualiser");
-		stage.setAlwaysOnTop(true);
+		//stage.setAlwaysOnTop(true);
 		stage.setOnCloseRequest( we -> {hide(); we.consume();} );
 		stage.setResizable(false);
 		show();

@@ -95,6 +95,60 @@ public class Album {
 
 		return null;
 	}
+	
+	Genre getGenre() {
+		PreparedStatement statement = Main.database.createStatement("SELECT Name FROM Genres WHERE ID = ?");
+		try {
+			statement.setInt(1, genreId);
+		} catch (SQLException ex) {
+			System.out.println("- setting ? error");
+		}
+		assert statement != null;
+
+		ResultSet results = Main.database.runSelectStatement(statement);
+
+		if (results != null) {
+			try {
+				while (results.next()) {
+					return new Genre (
+						results.getInt("Id"), 
+						results.getString("Name")
+					);
+				}
+			} catch (SQLException resultsexception) {
+				System.out.println("- Database result processing error: " + resultsexception.getMessage());
+			}
+		}
+
+		return null;
+	}
+
+	public int getNumberOfSongs() {
+		return getSongs().size();
+	}
+
+	public String getLength() {
+		//TODO X hours, X mins
+		/*
+		 * int lengthSeconds;
+		 * int lengthMinuites;
+		 * int lengthHours;
+		 * for (Song song : getSongs()) {
+		 *	+= song.getLength();
+		 * }
+		 * //Calc
+		 * String ret = "";
+		 * lengthHours + " hour, " + lengthMinuites + " minuites";
+		 * return ret;
+		 */
+		return "<TODO>";
+	}
+
+	public void removeFromDatabase() {
+		for (Song song : getSongs()) {
+			song.removeFromDatabase();
+		}
+	}
 
 	public static ArrayList<Album> getAllFromDatabase() {
 		ArrayList<Album> all = new ArrayList<Album>();

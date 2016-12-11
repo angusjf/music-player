@@ -57,6 +57,7 @@ class DatabaseController { //like 70% Steve's work
 			return null;
 		}
 	}
+	
 	//TODO just for compatibility
 	public ResultSet getResultOfQuery(String query) { return runSelectStatement(createStatement(query)); }
 
