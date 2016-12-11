@@ -57,6 +57,7 @@ class VisualiserSceneController {
 	}
 
 	int tick = 0;
+	double last[] = new double[bars.length];
 	private void draw() {
 		clear();
 		//text and picture

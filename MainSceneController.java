@@ -134,6 +134,7 @@ public class MainSceneController {
 
 	public void fillLibraryPane() {
 		String viewString = viewsChoiceBox.getSelectionModel().getSelectedItem().toString();
+		updateBackButtonEnabled(false);
 		switch (viewString) {
 			case "Albums":
 				showAlbumsView();
@@ -195,6 +196,7 @@ public class MainSceneController {
 				showAlbumsView();
 				break;
 			case "Songs":
+				showSongsView();
 				break;
 			case "Artists":
 				showArtistsView();
@@ -255,6 +257,7 @@ public class MainSceneController {
 	 */
 
 	void showSearchResultsView(String query) {
+		updateBackButtonEnabled(true);
 		//basically just turns a query into an arraylist for showXview
 		switch (viewsChoiceBox.getSelectionModel().getSelectedItem().toString()) {
 			case "Albums":
@@ -297,6 +300,7 @@ public class MainSceneController {
 	}
 
 	void showSongsView(String header, List<Song> songs) { // the 'real' method
+		if (viewsChoiceBox.getSelectionModel().getSelectedItem().toString() != "Songs") updateBackButtonEnabled(true);
 		libraryPane.getChildren().clear();
 		VBox vBox = new VBox();
 		libraryPane.getChildren().addAll(vBox);
@@ -375,7 +379,6 @@ public class MainSceneController {
 		vBox.setPadding(new Insets(4));
 		vBox.setSpacing(4);
 
-		System.out.println(album.getPicture());
 		ImageView image = new ImageView(album.getPicture());
 		image.setFitHeight(142);
 		image.setFitWidth(142);
