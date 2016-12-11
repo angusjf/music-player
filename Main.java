@@ -11,6 +11,7 @@ public class Main extends Application {
 	public static DatabaseController database;
 	public static MusicController musicController; //should this be static?
 	public static MainSceneController mainSceneController;
+	public static VisualiserSceneController visualiserSceneController;
 
 	public static void main(String[] args) {
 		database = new DatabaseController(DATABASE_FILE);
@@ -37,7 +38,10 @@ public class Main extends Application {
 	}
 
 	public static void openVisualiser() {
-		VisualiserSceneController visualiserSceneController = new VisualiserSceneController();
+		if (visualiserSceneController == null)
+			visualiserSceneController = new VisualiserSceneController();
+		else
+			visualiserSceneController.show();
 	}
 
 }

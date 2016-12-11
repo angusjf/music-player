@@ -10,18 +10,13 @@ class VisualiserSceneController {
 
 	Stage stage;
 	GraphicsContext gc;
-
-	final int WIDTH = 640, HEIGHT = 480;
-	//backgroundColor;
-	//foregroundColor;
-
+	
+	final int SCALE = 2;
+	final int WIDTH = 640 * SCALE, HEIGHT = 480 * SCALE;
 	final int noOfBars = 128;
-
 	private double[] bars = new double[noOfBars];
 
 	public VisualiserSceneController() {
-		System.out.println("+ VisualiserSceneController Scene Controller class started");
-		
 		new AnimationTimer() {
 			public void handle(long now) {
 				update();
@@ -40,15 +35,19 @@ class VisualiserSceneController {
 		stage.setScene(scene);
 		stage.setWidth(WIDTH);
 		stage.setHeight(HEIGHT+22);
-		stage.show();
+		stage.setTitle("Visualiser");
+		stage.setAlwaysOnTop(true);
+		stage.setOnCloseRequest( we -> {hide(); we.consume();} );
+		stage.setResizable(false);
+		show();
 	}
 
 	public void show() {
-		//TODO
+		stage.show();
 	}
 
 	public void hide() {
-		//TODO
+		stage.close();
 	}
 
 	private void update() {
@@ -63,14 +62,40 @@ class VisualiserSceneController {
 		//text and picture
 		for (int i = 0; i < bars.length; i++) {
 			gc.setFill(Color.hsb(i*360/bars.length + tick, 1, 1));
-			gc.fillRect(
-				Math.round(((double)i / (double)noOfBars) * WIDTH) * 2 + 2,
-				(HEIGHT - bars[i]) - HEIGHT * 0.5 + bars[i] * 0.5,
-				WIDTH/noOfBars,
-				bars[i]
-			);//reflecton mmode??
+			drawBar(i, bars[i] * 0.5);
+			gc.setFill(Color.hsb(i*360/bars.length + tick, 1, 0.5));
+			drawBar(i, -bars[i] * 0.5);
+
+			/* NORMAL
+			gc.fillRect( Math.round(((double)i / (double)noOfBars) * WIDTH) * 2 + 2, (HEIGHT - bars[i]) - HEIGHT * 0.5 + bars[i] * 0.5, WIDTH/noOfBars, bars[i]);
+			//reflecton mode??
+			gc.fillRect( Math.round(((double)i / (double)noOfBars) * WIDTH) * 2 + 2, HEIGHT * 0.5, WIDTH/noOfBars, bars[i] * 0.5);
+			gc.setFill(Color.hsb(i*360/bars.length + tick, 0, 0.8));
+			gc.fillRect( Math.round(((double)i / (double)noOfBars) * WIDTH) * 2 + 2, HEIGHT * 0.5 + bars[i], WIDTH/noOfBars, bars[i] * 0.5); 
+			COOL
+			gc.fillRect( Math.round(((double)i / (double)noOfBars) * WIDTH) * 2 + 2, (HEIGHT - bars[i]) - HEIGHT * 0.5 + bars[i], WIDTH/noOfBars, bars[i] * 0.5);
+			gc.setFill(Color.hsb(i*360/bars.length + tick, 1, 0.8));
+			gc.fillRect( Math.round(((double)i / (double)noOfBars) * WIDTH) * 2 + 2, (HEIGHT - bars[i]) - HEIGHT * 0.5 - bars[i], WIDTH/noOfBars, bars[i] * 0.5); */ 
 		}
-		tick -= 2;
+		tick -= 1;
+	}
+
+	private void drawBar(int xPos, double height) {
+		if (height < 0) {
+			gc.fillRect(
+				Math.round(((double)xPos / (double)noOfBars) * WIDTH) * 2 + 2,
+				HEIGHT * 0.5,
+				WIDTH/noOfBars,
+				height * -1
+			);
+		} else {
+			gc.fillRect(
+				Math.round(((double)xPos / (double)noOfBars) * WIDTH) * 2 + 2,
+				HEIGHT * 0.5 - height,
+				WIDTH/noOfBars,
+				height
+			);
+		}
 	}
 
 	private void clear() {

@@ -20,7 +20,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import java.util.List;
 import java.util.ArrayList;
 import javafx.scene.input.MouseEvent;
@@ -53,12 +52,7 @@ public class MainSceneController {
 		stage.show();
 
 		// secure close button
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			public void handle(WindowEvent we) {
-				Main.terminate();
-				we.consume();
-			}
-		});
+		stage.setOnCloseRequest( we -> {Main.terminate(); we.consume();} );
 	}
 
 	@FXML void initialize() {
