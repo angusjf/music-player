@@ -11,7 +11,7 @@ class VisualiserSceneController {
 	GraphicsContext gc;
 	VisualiserStyle visualiser;
 
-	static final int SCALE = 1;
+	static final int SCALE = 2;
 	static final int WIDTH = 640 * SCALE, HEIGHT = 480 * SCALE;
 
 	public VisualiserSceneController() {
@@ -40,7 +40,7 @@ class VisualiserSceneController {
 
 		//VisualiserStyle[] //TODO also toString
 
-		visualiser = new BarVisualiserStyle(gc);//TODO
+		visualiser = new ShapeVisualiserStyle(gc);//TODO
 	}
 
 	public void show() {
@@ -49,7 +49,8 @@ class VisualiserSceneController {
 	}
 
 	public void hide() {
-		stage.close();
+		//stage.close();
+		visualiser = new GridVisualiserStyle(gc);//TODO
 	}
 
 	private void draw() {

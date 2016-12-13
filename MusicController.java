@@ -45,7 +45,7 @@ class MusicController {
 	 */
 
 	//QUEUE
-	
+
 	public void addToQueueEnd(Song song) {
 		queue.add(song);
 		Main.mainSceneController.updateSongQueueContents();
@@ -203,7 +203,7 @@ class MusicController {
 	//	mediaPlayer.stop();
 		mediaPlayer = null;
 	}
-	
+
 	private void play() {
 		if (mediaPlayer != null)
  			mediaPlayer.play();
