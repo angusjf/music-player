@@ -56,6 +56,18 @@ public class GridVisualiserStyle implements VisualiserStyle {
         */
 	}
 
+    public void leftKey() {
+    }
+
+    public void rightKey() {
+    }
+
+    public void upKey() {
+    }
+
+    public void downKey() {
+    }
+
 	public String toString() {
 		return "Grid";
 	}

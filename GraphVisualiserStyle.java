@@ -62,6 +62,18 @@ public class GraphVisualiserStyle implements VisualiserStyle {
 	}
     */
 
+    public void leftKey() {
+    }
+
+    public void rightKey() {
+    }
+
+    public void upKey() {
+    }
+
+    public void downKey() {
+    }
+
 	public String toString() {
 		return "Line Graph";
 	}

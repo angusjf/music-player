@@ -4,6 +4,8 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.animation.AnimationTimer;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 class VisualiserSceneController {
 
@@ -16,7 +18,7 @@ class VisualiserSceneController {
 
 	public VisualiserSceneController() {
 
-		Canvas canvas = new Canvas(WIDTH * 2, HEIGHT);
+		Canvas canvas = new Canvas(WIDTH * 2, HEIGHT * 2);
 		gc = canvas.getGraphicsContext2D();
 
 		Group root = new Group();
@@ -29,7 +31,13 @@ class VisualiserSceneController {
 		stage.setHeight(HEIGHT+22);
 		stage.setTitle("Visualiser");
 		stage.setOnCloseRequest( we -> {hide(); we.consume();} );
-		//stage.setResizable(false);
+		stage.addEventHandler(KeyEvent.KEY_PRESSED, k -> {
+			if (k.getCode() == KeyCode.LEFT) visualiser.leftKey();
+			else if (k.getCode() == KeyCode.RIGHT) visualiser.rightKey();
+			else if (k.getCode() == KeyCode.UP) visualiser.upKey();
+			else if (k.getCode() == KeyCode.DOWN) visualiser.downKey();
+		});
+		//stage.setResizable(false); TODO
 		show();
 
 		new AnimationTimer() {
@@ -37,20 +45,18 @@ class VisualiserSceneController {
 				draw();
 			}
 		}.start();
-
-		//VisualiserStyle[] //TODO
-
-		visualiser = new ShapeVisualiserStyle(gc);//TODO
 	}
 
 	public void show() {
+		//VisualiserStyle[] //TODO
+		visualiser = new BarVisualiserStyle(gc);
 		stage.show();
 		stage.toFront();
 	}
 
 	public void hide() {
 		//stage.close();
-		visualiser = new GridVisualiserStyle(gc);//TODO
+		visualiser = new ShapeVisualiserStyle(gc);
 	}
 
 	private void draw() {

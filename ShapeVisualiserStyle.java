@@ -2,11 +2,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.*;
 
 class Point {
-    final int   minRadius = Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 2,
-                maxRadius = minRadius * 2;
+    static final int   maxRadius = Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 2,
+                minRadius = maxRadius / ShapeVisualiserStyle.minCircleDivider;
 
-    final int   offsetX = VisualiserSceneController.WIDTH / 2,
-                offsetY = VisualiserSceneController.HEIGHT / 2 - minRadius;
+    static final int   offsetX = VisualiserSceneController.WIDTH / 2,
+                offsetY = VisualiserSceneController.HEIGHT / 2;
 
     public double x = 0, y = 0;
     public Color color;
@@ -24,57 +24,62 @@ class Point {
 
     public double getXPosFromFreq(double f) {
         double xPos;
-        double fPos = 2 * Math.PI * freq / 128;
+        double fPos = 2 * Math.PI * freq / 128 * ShapeVisualiserStyle.divider;
         xPos = Math.sin(fPos);
-        xPos *= maxRadius + (maxRadius - minRadius) * f;
+        xPos *= minRadius + (maxRadius - minRadius) * f;
         return xPos + offsetX;
     }
 
     public double getYPosFromFreq(double f) {
         double yPos;
-        double fPos = 2 * Math.PI * freq / 128;
+        double fPos = 2 * Math.PI * freq / 128 * ShapeVisualiserStyle.divider;
         yPos = Math.cos(fPos);
-        yPos *= maxRadius + (maxRadius - minRadius) * f;
+        yPos *= minRadius + (maxRadius - minRadius) * f;
         return yPos + offsetY;
     }
 }
 
 public class ShapeVisualiserStyle implements VisualiserStyle {
+    //THINGS THAT CHANGE THE LOOK (UI OPTION?)
+    public static int divider = 4;
+    public static int minCircleDivider = 3;
 
     GraphicsContext gc;
-    Point[] points = new Point[32];
+    Point[] points = new Point[128/divider];
     final Color lineColor = Color.rgb(240, 39, 94);
 
     public ShapeVisualiserStyle(GraphicsContext gc) {
         this.gc = gc;
         for (int i = 0; i < points.length; i++) {
-            points[i] = new Point(Color.rgb(240, 39, 94), i * 128 / points.length / 4);
+            points[i] = new Point(Color.rgb(240, 39, 94), i * 128 / points.length / divider);
         }
     }
 
     public Color getBackgroundColor() {
-        return Color.rgb(33,33,33);
+        return Color.rgb(33, 33, 33);
     }
 
     public void draw() {
+        double[] xs = new double[points.length], ys = new double[points.length];
+		gc.setFill(Color.hsb(0,0,0.9));
         for (int i = 0; i < points.length; i++) {
+            points[i].updatePos();
+            xs[i] = points[i].x;
+            ys[i] = points[i].y;
+        }
+        gc.fillPolygon(xs, ys, points.length);
+		gc.setFill(getBackgroundColor());
+        //middle bit
+        //gc.fillOval(Point.offsetX - Point.minRadius, Point.offsetY - Point.minRadius, Point.offsetX * 0.75, Point.offsetY);
+
+        //OUTLINE
+        /* for (int i = 0; i < points.length; i++) {
             points[i].updatePos();
             drawPoint(points[i]);
         }
-        for (int i = 0; i < points.length - 1; i++) {
+        for (int i = 0; i < points.length - 1; i++)
             drawLine(points[i], points[i + 1]);
-        }
-        drawLine(points[points.length - 1], points[0]);
-        //TODO
-        {
-		    gc.setLineWidth(100);
-		    gc.strokeLine(
-                VisualiserSceneController.WIDTH / 2,
-                VisualiserSceneController.HEIGHT / 2 - Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 2,
-                VisualiserSceneController.WIDTH / 2,
-                VisualiserSceneController.HEIGHT / 2 - Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 2
-            );
-        }
+        drawLine(points[points.length - 1], points[0]); */
     }
 
 	private void drawPoint(Point point) {
@@ -88,6 +93,22 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
 		gc.setStroke(lineColor);
 		gc.strokeLine(a.x, a.y, b.x, b.y);
 	}
+
+    public void leftKey() {
+        divider -= 1;
+    }
+
+    public void rightKey() {
+        divider += 1;
+    }
+
+    public void upKey() {
+        minCircleDivider += 1;
+    }
+
+    public void downKey() {
+        minCircleDivider -= 1;
+    }
 
 	public String toString() {
 		return "Shape";

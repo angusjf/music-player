@@ -19,7 +19,7 @@ public class BarVisualiserStyle implements VisualiserStyle {
 		for (int i = 0; i < bars.length; i++) {
 			bars[i] = Maths.lerp(
                 bars[i],
-                Main.musicController.getMagnitudeOfFrequency(0) * VisualiserSceneController.HEIGHT,
+                Main.musicController.getMagnitudeOfFrequency(i) * VisualiserSceneController.HEIGHT,
                 0.5
             );
 	        drawBar(i, bars[i] * 0.5);
@@ -52,6 +52,18 @@ public class BarVisualiserStyle implements VisualiserStyle {
         //ret += 3;
         ret = Math.round(ret);
         return ret;
+    }
+
+    public void leftKey() {
+    }
+
+    public void rightKey() {
+    }
+
+    public void upKey() {
+    }
+
+    public void downKey() {
     }
 
 	public String toString() {
