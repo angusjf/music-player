@@ -2,10 +2,12 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.*;
 
 class Point {
-    final int minRadius = Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 32,
-        maxRadius = minRadius * 4;
-    final int offsetX = VisualiserSceneController.WIDTH / 2,
-        offsetY = (VisualiserSceneController.HEIGHT - minRadius) / 2;
+    final int   minRadius = Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 2,
+                maxRadius = minRadius * 2;
+
+    final int   offsetX = VisualiserSceneController.WIDTH / 2,
+                offsetY = VisualiserSceneController.HEIGHT / 2 - minRadius;
+
     public double x = 0, y = 0;
     public Color color;
     private int freq;
@@ -30,7 +32,7 @@ class Point {
 
     public double getYPosFromFreq(double f) {
         double yPos;
-        double fPos = 2 * Math.PI * freq / 128 / 4;
+        double fPos = 2 * Math.PI * freq / 128;
         yPos = Math.cos(fPos);
         yPos *= maxRadius + (maxRadius - minRadius) * f;
         return yPos + offsetY;
@@ -63,6 +65,16 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
             drawLine(points[i], points[i + 1]);
         }
         drawLine(points[points.length - 1], points[0]);
+        //TODO
+        {
+		    gc.setLineWidth(100);
+		    gc.strokeLine(
+                VisualiserSceneController.WIDTH / 2,
+                VisualiserSceneController.HEIGHT / 2 - Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 2,
+                VisualiserSceneController.WIDTH / 2,
+                VisualiserSceneController.HEIGHT / 2 - Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 2
+            );
+        }
     }
 
 	private void drawPoint(Point point) {

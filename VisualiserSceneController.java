@@ -11,7 +11,7 @@ class VisualiserSceneController {
 	GraphicsContext gc;
 	VisualiserStyle visualiser;
 
-	static final int SCALE = 2;
+	static final int SCALE = 1;
 	static final int WIDTH = 640 * SCALE, HEIGHT = 480 * SCALE;
 
 	public VisualiserSceneController() {
@@ -38,7 +38,7 @@ class VisualiserSceneController {
 			}
 		}.start();
 
-		//VisualiserStyle[] //TODO also toString
+		//VisualiserStyle[] //TODO
 
 		visualiser = new ShapeVisualiserStyle(gc);//TODO
 	}

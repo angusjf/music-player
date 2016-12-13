@@ -7,20 +7,20 @@ import javafx.util.Duration;
 import javafx.scene.media.AudioSpectrumListener;
 
 enum PlayMode {
-	REPEAT, CYCLE, SINGLE
+    REPEAT, CYCLE, SINGLE
 }
 
 class AngusListener implements AudioSpectrumListener {
 
-	public float[] magnitudes;
+    public float[] magnitudes;
 
-	public AngusListener() {
-		magnitudes = new float[128];
-	}
+    public AngusListener() {
+        magnitudes = new float[128];
+    }
 
-	public void spectrumDataUpdate(double timestamp, double duration, float[] magnitudes, float[] phases) {
-		this.magnitudes = magnitudes;
-	}
+    public void spectrumDataUpdate(double timestamp, double duration, float[] magnitudes, float[] phases) {
+        this.magnitudes = magnitudes;
+    }
 }
 
 class MusicController {
@@ -190,12 +190,16 @@ class MusicController {
 	 */
 
 	private void setSong(Song song) {
-		Media media = new Media(new File(song.getFile()).toURI().toString());
-		if (mediaPlayer != null) mediaPlayer.stop();
-		mediaPlayer = new MediaPlayer(media);
-		mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
-		mediaPlayer.setAudioSpectrumListener(asl);
-		setPaused(false);
+        File file = new File(song.getFile());
+        if (!file.exists()) {
+            return; // TODO
+        }
+        Media media = new Media(file.toURI().toString());
+        if (mediaPlayer != null) mediaPlayer.stop();
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
+        mediaPlayer.setAudioSpectrumListener(asl);
+        setPaused(false);
 	}
 
 	private void setSong() {
