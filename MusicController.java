@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import javafx.scene.media.Media;
+import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import java.io.File;
 import javafx.scene.media.EqualizerBand;
@@ -15,7 +16,7 @@ class AngusListener implements AudioSpectrumListener {
     public float[] magnitudes;
 
     public AngusListener() {
-        magnitudes = new float[128];
+        magnitudes = new float[256];
     }
 
     public void spectrumDataUpdate(double timestamp, double duration, float[] magnitudes, float[] phases) {
@@ -33,6 +34,9 @@ class MusicController {
 
 	private MediaPlayer mediaPlayer;
 	private AngusListener asl;
+
+	public static final double samplesPerSecond = (double)1/60;
+	public static final int numberOfBands = 512;
 
 	public MusicController () {
 		// TODO setCurrentMode(PlayMode.REPEAT);
@@ -190,16 +194,17 @@ class MusicController {
 	 */
 
 	private void setSong(Song song) {
-        File file = new File(song.getFile());
-        if (!file.exists()) {
-            return; // TODO
-        }
-        Media media = new Media(file.toURI().toString());
-        if (mediaPlayer != null) mediaPlayer.stop();
-        mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
-        mediaPlayer.setAudioSpectrumListener(asl);
-        setPaused(false);
+		File file = new File(song.getFile());
+		assert file.exists() : "- NOT A REAL FILE";
+		Media media = new Media(file.toURI().toString());
+
+		if (mediaPlayer != null) mediaPlayer.stop();
+		mediaPlayer = new MediaPlayer(media);
+		mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
+		mediaPlayer.setAudioSpectrumListener(asl);
+		mediaPlayer.setAudioSpectrumInterval(samplesPerSecond);
+		mediaPlayer.setAudioSpectrumNumBands(numberOfBands);
+		setPaused(false);
 	}
 
 	private void setSong() {
@@ -224,7 +229,6 @@ class MusicController {
 	 * NASTY VISUALISER STUFF
 	 */
 
-	//double t = 0;//TODO
 	public float getMagnitudeOfFrequency (int n) {
 		if (isPaused())
 			return 0;

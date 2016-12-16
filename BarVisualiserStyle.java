@@ -4,8 +4,9 @@ import javafx.scene.paint.*;
 public class BarVisualiserStyle implements VisualiserStyle {
 
     GraphicsContext gc;
-    double[] bars = new double[128];
+    double[] bars = new double[256];
     int tick = 0;
+    double lerpAmount = 0.5;
 
     public BarVisualiserStyle(GraphicsContext gc) {
         this.gc = gc;
@@ -20,7 +21,7 @@ public class BarVisualiserStyle implements VisualiserStyle {
 			bars[i] = Maths.lerp(
                 bars[i],
                 Main.musicController.getMagnitudeOfFrequency(i) * VisualiserSceneController.HEIGHT,
-                0.5
+                lerpAmount
             );
 	        drawBar(i, bars[i] * 0.5);
         }
@@ -55,9 +56,13 @@ public class BarVisualiserStyle implements VisualiserStyle {
     }
 
     public void leftKey() {
+	    lerpAmount -= 0.1;
+	    System.out.println("% set lerp to " + lerpAmount);
     }
 
     public void rightKey() {
+	    lerpAmount += 0.1;
+	    System.out.println("% set lerp to " + lerpAmount);
     }
 
     public void upKey() {

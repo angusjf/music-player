@@ -13,11 +13,12 @@ class VisualiserSceneController {
 	GraphicsContext gc;
 	VisualiserStyle visualiser;
 
-	static final int SCALE = 1;
-	static final int WIDTH = 640 * SCALE, HEIGHT = 480 * SCALE;
+	static int
+	SCALE = 1,
+	WIDTH = 640 * SCALE,
+	HEIGHT = 480 * SCALE;
 
 	public VisualiserSceneController() {
-
 		Canvas canvas = new Canvas(WIDTH * 2, HEIGHT * 2);
 		gc = canvas.getGraphicsContext2D();
 
@@ -36,6 +37,7 @@ class VisualiserSceneController {
 			else if (k.getCode() == KeyCode.RIGHT) visualiser.rightKey();
 			else if (k.getCode() == KeyCode.UP) visualiser.upKey();
 			else if (k.getCode() == KeyCode.DOWN) visualiser.downKey();
+			else if (k.getCode() == KeyCode.SPACE) Main.musicController.togglePaused();
 		});
 		//stage.setResizable(false); TODO
 		show();
