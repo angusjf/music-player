@@ -35,13 +35,14 @@ class MusicController {
 	private MediaPlayer mediaPlayer;
 	private AngusListener asl;
 
-	public static final double samplesPerSecond = (double)1/60;
+	public static final double sampleInterval = (double)1/30;
 	public static final int numberOfBands = 512;
 
 	public MusicController () {
 		// TODO setCurrentMode(PlayMode.REPEAT);
 		queue = new ArrayList<Song>();
 		asl = new AngusListener();
+		currentMode = PlayMode.CYCLE;
 	}
 
 	/*
@@ -57,9 +58,7 @@ class MusicController {
 	}
 
 	public void addToQueueEnd(Album album) {
-		for (Song song : album.getSongs()) {
-			addToQueueEnd(song); // ^
-		}
+		for (Song song : album.getSongs()) addToQueueEnd(song); // ^
 	}
 
 	public void addToQueueNext(Song song) {
@@ -70,6 +69,10 @@ class MusicController {
 		}
 		Main.mainSceneController.updatePlayButtonEnabled(queue.size() > 0);
 		Main.mainSceneController.updateSongQueueContents();
+	}
+
+	public void addToQueueNext(Album album) {
+		for (Song song : album.getSongs()) addToQueueNext (song); //^
 	}
 
 	public void skipCurrentSongAndPlay(Song song) {
@@ -157,7 +160,7 @@ class MusicController {
 
 	private void setCurrentMode(PlayMode mode) {
 		currentMode = mode;
-		switch (mode) {
+		switch (currentMode) {
 			case REPEAT:
 				Main.mainSceneController.updatePlayModeButtonText("Repeat");
 				break;
@@ -202,7 +205,7 @@ class MusicController {
 		mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
 		mediaPlayer.setAudioSpectrumListener(asl);
-		mediaPlayer.setAudioSpectrumInterval(samplesPerSecond);
+		mediaPlayer.setAudioSpectrumInterval(sampleInterval);
 		mediaPlayer.setAudioSpectrumNumBands(numberOfBands);
 		setPaused(false);
 	}

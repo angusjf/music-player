@@ -3,7 +3,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
-public class Playlist {
+public class Playlist implements HasSongs {
 	
 	private int id;
 	private String name;

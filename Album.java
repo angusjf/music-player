@@ -3,7 +3,7 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class Album {
+public class Album implements HasSongs {
 
 	private	int id, artistId, genreId;
 	private String title, year, picture;

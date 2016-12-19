@@ -3,7 +3,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 
-public class Genre {
+public class Genre implements HasAlbums {
 
 	private int id;
 	private String name;
@@ -21,10 +21,10 @@ public class Genre {
 		return name;
 	}
 
-	public ArrayList<Song> getSongs() {
-		ArrayList<Song> songs = new ArrayList<Song>();
+	public ArrayList<Album> getAlbums() {
+		ArrayList<Album> albums = new ArrayList<Album>();
 
-		PreparedStatement statement = Main.database.createStatement("SELECT Songs.Id, Songs.AlbumId, Songs.TrackNumber, Songs.Name, Songs.File, Songs.Length FROM Songs Inner join albums on Songs.AlbumId = albums.id WHERE albums.GenreId = ? ORDER BY Albums.Title, AlbumId, tracknumber ASC");
+		PreparedStatement statement = Main.database.createStatement("SELECT * FROM Albums WHERE genreId = ?");
 
 		try {
 			statement.setInt(1, id);
@@ -37,14 +37,14 @@ public class Genre {
 		if (results != null) {
 			try {
 				while (results.next()) {
-					songs.add(
-						new Song(
+					albums.add(
+						new Album(
 							results.getInt("Id"), 
-							results.getInt("AlbumId"),
-							results.getInt("TrackNumber"),
-							results.getString("Name"), 
-							results.getString("File"),
-							results.getString("Length")
+							results.getInt("artistId"),
+							results.getInt("genreId"),
+							results.getString("title"), 
+							results.getString("year"),
+							results.getString("picture")
 						)
 					);
 				}
@@ -52,7 +52,7 @@ public class Genre {
 				System.out.println("- Database result processing error: " + resultsexception.getMessage());
 			}
 		}
-		return songs;
+		return albums;
 	}
 
 	public static ArrayList<Genre> getAllFromDatabase() {

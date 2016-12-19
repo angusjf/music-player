@@ -8,7 +8,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.collections.ObservableMap;
 import javafx.collections.MapChangeListener;
-
+import javafx.scene.image.Image;
+import javafx.embed.swing.SwingFXUtils;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 
 public class Song {
 
@@ -28,19 +32,6 @@ public class Song {
 
 	public Song(File file) {
 		
-		/*
-		 * image = javafx.scene.image.Image@13cc7fe0
-		 * comment-0 = [eng]=Visit http://kozilek.bandcamp.com
-		 * album artist = KOZILEK
-		 * artist = KOZILEK
-		 * year = 2015
-		 * raw metadata = {ID3=java.nio.HeapByteBufferR[pos=494597 lim=494602 cap=494602]}
-		 * album = GUN GODZ OST
-		 * genre = (24)
-		 * title = I Don't Need No Tricks To Kill
-		 */
-
-
 		int fileAlbumId = 0;
 		int fileTrackNumber = 5;
 		String fileName = file.getName();
@@ -49,474 +40,34 @@ public class Song {
 		String fileFile = file.getAbsolutePath();
 		String fileYear = "2100";
 		String fileLength = "-1";
+		String fileGenre = "";
+		int fileGenreNumber = 0;
 
 		Media media = new Media(file.toURI().toString());
 		MediaPlayer mp = new MediaPlayer(media);
 		mp.play();
 		ObservableMap<String, Object> metaData = media.getMetadata();
 		
-		System.out.println("*****\n" + metaData);
-
-		mp.getMedia().getMetadata().addListener( (MapChangeListener<String, Object>) change -> {
+		mp.getMedia().getMetadata().addListener((MapChangeListener<String, Object>) change -> {
 			if(change.wasAdded()) {
-				System.out.println(change.getKey() + " = " + change.getValueAdded().toString());
-			/*
-				if (change.getKey().equals("artist"))
-					fileArtist = change.getValueAdded().toString();
-				else if (change.getKey().equals("title"))
-					fileName = change.getValueAdded().toString();
+				if (change.getKey().equals("image"))
+					setPicture((Image)change.getValueAdded());
+					/*
+				else if (change.getKey().equals("album"))
+					//fileName = change.getValueAdded().toString();
+				else if (change.getKey().equals("artist"))
+					//fileYear = change.getValueAdded().toString();
 				else if (change.getKey().equals("year"))
-					fileYear = change.getValueAdded().toString();
+					//fileYear = change.getValueAdded().toString();
+				else if (change.getKey().equals("album"))
+					//fileYear = change.getValueAdded().toString();
+				else if (change.getKey().equals("genre"))
+					//fileYear = change.getValueAdded().toString();
+				else if (change.getKey().equals("title"))
+					//fileYear = change.getValueAdded().toString();
 					*/
 			}
 		});
-
-		switch (0) {
-			case 0:
-				zzz = "Blues";
-				break;
-			case 1:
-				zzz = "Classic Rock";
-				break;
-			case 2:
-				zzz = "Country";
-				break;
-			case 3:
-				zzz = "Dance";
-				break;
-			case 4:
-				zzz = "Disco";
-				break;
-			case 5:
-				zzz = "Funk";
-				break;
-			case 6:
-				zzz = "Grunge";
-				break;
-			case 7:
-				zzz = "Hip-Hop";
-				break;
-			case 8:
-				zzz = "Jazz";
-				break;
-			case 9:
-				zzz = "Metal";
-				break;
-			case 10:
-				zzz = "New Age";
-				break;
-			case 11:
-				zzz = "Oldies";
-				break;
-			case 12:
-				zzz = "Other";
-				break;
-			case 13:
-				zzz = "Pop";
-				break;
-			case 14:
-				zzz = "R&B";
-				break;
-			case 15:
-				zzz = "Rap";
-				break;
-			case 16:
-				zzz = "Reggae";
-				break;
-			case 17:
-				zzz = "Rock";
-				break;
-			case 18:
-				zzz = "Techno";
-				break;
-			case 19:
-				zzz = "Industrial";
-				break;
-			case 20:
-				zzz = "Alternative";
-				break;
-			case 21:
-				zzz = "Ska";
-				break;
-			case 22:
-				zzz = "Death Metal";
-				break;
-			case 23:
-				zzz = "Pranks";
-				break;
-			case 24:
-				zzz = "Soundtrack";
-				break;
-			case 25:
-				zzz = "Euro-Techno";
-				break;
-			case 26:
-				zzz = "Ambient";
-				break;
-			case 27:
-				zzz = "Trip-Hop";
-				break;
-			case 28:
-				zzz = "Vocal";
-				break;
-			case 29:
-				zzz = "Jazz+Funk";
-				break;
-			case 30:
-				zzz = "Fusion";
-				break;
-			case 31:
-				zzz = "Trance";
-				break;
-			case 32:
-				zzz = "Classical";
-				break;
-			case 33:
-				zzz = "Instrumental";
-				break;
-			case 34:
-				zzz = "Acid";
-				break;
-			case 35:
-				zzz = "House";
-				break;
-			case 36:
-				zzz = "Game";
-				break;
-			case 37:
-				zzz = "Sound Clip";
-				break;
-			case 38:
-				zzz = "Gospel";
-				break;
-			case 39:
-				zzz = "Noise";
-				break;
-			case 40:
-				zzz = "Alternative Rock";
-				break;
-			case 41:
-				zzz = "Bass";
-				break;
-			case 42:
-				zzz = "Soul";
-				break;
-			case 43:
-				zzz = "Punk";
-				break;
-			case 44:
-				zzz = "Space";
-				break;
-			case 45:
-				zzz = "Meditative";
-				break;
-			case 46:
-				zzz = "Instrumental Pop";
-				break;
-			case 47:
-				zzz = "Instrumental Rock";
-				break;
-			case 48:
-				zzz = "Ethnic";
-				break;
-			case 49:
-				zzz = "Gothic";
-				break;
-			case 50:
-				zzz = "Darkwave";
-				break;
-			case 51:
-				zzz = "Techno-Industrial";
-				break;
-			case 52:
-				zzz = "Electronic";
-				break;
-			case 53:
-				zzz = "Pop-Folk";
-				break;
-			case 54:
-				zzz = "Eurodance";
-				break;
-			case 55:
-				zzz = "Dream";
-				break;
-			case 56:
-				zzz = "Southern Rock";
-				break;
-			case 57:
-				zzz = "Comedy";
-				break;
-			case 58:
-				zzz = "Cult";
-				break;
-			case 59:
-				zzz = "Gangsta";
-				break;
-			case 60:
-				zzz = "Top 40";
-				break;
-			case 61:
-				zzz = "Christian Rap";
-				break;
-			case 62:
-				zzz = "Pop/Funk";
-				break;
-			case 63:
-				zzz = "Jungle";
-				break;
-			case 64:
-				zzz = "Native US";
-				break;
-			case 65:
-				zzz = "Cabaret";
-				break;
-			case 66:
-				zzz = "New Wave";
-				break;
-			case 67:
-				zzz = "Psychadelic";
-				break;
-			case 68:
-				zzz = "Rave";
-				break;
-			case 69:
-				zzz = "Showtunes";
-				break;
-			case 70:
-				zzz = "Trailer";
-				break;
-			case 71:
-				zzz = "Lo-Fi";
-				break;
-			case 72:
-				zzz = "Tribal";
-				break;
-			case 73:
-				zzz = "Acid Punk";
-				break;
-			case 74:
-				zzz = "Acid Jazz";
-				break;
-			case 75:
-				zzz = "Polka";
-				break;
-			case 76:
-				zzz = "Retro";
-				break;
-			case 77:
-				zzz = "Musical";
-				break;
-			case 78:
-				zzz = "Rock & Roll";
-				break;
-			case 79:
-				zzz = "Hard Rock";
-				break;
-			case 80:
-				zzz = "Folk";
-				break;
-			case 81:
-				zzz = "Folk-Rock";
-				break;
-			case 82:
-				zzz = "National Folk";
-				break;
-			case 83:
-				zzz = "Swing";
-				break;
-			case 84:
-				zzz = "Fast Fusion";
-				break;
-			case 85:
-				zzz = "Bebob";
-				break;
-			case 86:
-				zzz = "Latin";
-				break;
-			case 87:
-				zzz = "Revival";
-				break;
-			case 88:
-				zzz = "Celtic";
-				break;
-			case 89:
-				zzz = "Bluegrass";
-				break;
-			case 90:
-				zzz = "Avantgarde";
-				break;
-			case 91:
-				zzz = "Gothic Rock";
-				break;
-			case 92:
-				zzz = "Progressive Rock";
-				break;
-			case 93:
-				zzz = "Psychedelic Rock";
-				break;
-			case 94:
-				zzz = "Symphonic Rock";
-				break;
-			case 95:
-				zzz = "Slow Rock";
-				break;
-			case 96:
-				zzz = "Big Band";
-				break;
-			case 97:
-				zzz = "Chorus";
-				break;
-			case 98:
-				zzz = "Easy Listening";
-				break;
-			case 99:
-				zzz = "Acoustic";
-				break;
-			case 100:
-				zzz = "Humour";
-				break;
-			case 101:
-				zzz = "Speech";
-				break;
-			case 102:
-				zzz = "Chanson";
-				break;
-			case 103:
-				zzz = "Opera";
-				break;
-			case 104:
-				zzz = "Chamber Music";
-				break;
-			case 105:
-				zzz = "Sonata";
-				break;
-			case 106:
-				zzz = "Symphony";
-				break;
-			case 107:
-				zzz = "Booty Bass";
-				break;
-			case 108:
-				zzz = "Primus";
-				break;
-			case 109:
-				zzz = "Porn Groove";
-				break;
-			case 110:
-				zzz = "Satire";
-				break;
-			case 111:
-				zzz = "Slow Jam";
-				break;
-			case 112:
-				zzz = "Club";
-				break;
-			case 113:
-				zzz = "Tango";
-				break;
-			case 114:
-				zzz = "Samba";
-				break;
-			case 115:
-				zzz = "Folklore";
-				break;
-			case 116:
-				zzz = "Ballad";
-				break;
-			case 117:
-				zzz = "Power Ballad";
-				break;
-			case 118:
-				zzz = "Rhytmic Soul";
-				break;
-			case 119:
-				zzz = "Freestyle";
-				break;
-			case 120:
-				zzz = "Duet";
-				break;
-			case 121:
-				zzz = "Punk Rock";
-				break;
-			case 122:
-				zzz = "Drum Solo";
-				break;
-			case 123:
-				zzz = "Acapella";
-				break;
-			case 124:
-				zzz = "Euro-House";
-				break;
-			case 125:
-				zzz = "Dance Hall";
-				break;
-			case 126:
-				zzz = "Goa";
-				break;
-			case 127:
-				zzz = "Drum & Bass";
-				break;
-			case 128:
-				zzz = "Club-House";
-				break;
-			case 129:
-				zzz = "Hardcore";
-				break;
-			case 130:
-				zzz = "Terror";
-				break;
-			case 131:
-				zzz = "Indie";
-				break;
-			case 132:
-				zzz = "BritPop";
-				break;
-			case 133:
-				zzz = "Negerpunk";
-				break;
-			case 134:
-				zzz = "Polsk Punk";
-				break;
-			case 135:
-				zzz = "Beat";
-				break;
-			case 136:
-				zzz = "Christian Gangsta";
-				break;
-			case 137:
-				zzz = "Heavy Metal";
-				break;
-			case 138:
-				zzz = "Black Metal";
-				break;
-			case 139:
-				zzz = "Crossover";
-				break;
-			case 140:
-				zzz = "Contemporary C";
-				break;
-			case 141:
-				zzz = "Christian Rock";
-				break;
-			case 142:
-				zzz = "Merengue";
-				break;
-			case 143:
-				zzz = "Salsa";
-				break;
-			case 144:
-				zzz = "Thrash Metal";
-				break;
-			case 145:
-				zzz = "Anime";
-				break;
-			case 146:
-				zzz = "JPop";
-				break;
-			case 147:
-				zzz = "SynthPop";
-				break;
-		}
 
 		/*
 		// CHECK FOR ALBUM WITH THAT NAME
@@ -541,7 +92,6 @@ public class Song {
 		}
 
 		//ADD TO DATABASE
-*/
 		PreparedStatement statement = Main.database.createStatement(
 			"INSERT INTO SONGS (AlbumId, TrackNumber, Name, File, Length) VALUES (?, ?, ?, ?, ?)"
 		);
@@ -557,6 +107,473 @@ public class Song {
 		}
 		
 		Main.database.runUpdateStatement(statement);
+		*/
+	}
+	
+	public void setPicture(Image image) {
+		File outputFile = new File("./resources/images/albums/testimage.png");
+		BufferedImage bi = SwingFXUtils.fromFXImage(image, null);
+		try {
+			ImageIO.write(bi, "png", outputFile);
+		} catch (IOException e) {
+			System.out.println("error writing song image to file");
+			throw new RuntimeException(e);
+		}
+	}
+
+	public void setGenre(int fileGenreNumber) {
+		String fileGenre;
+		switch (fileGenreNumber) {
+			case 0:
+				fileGenre = "Blues";
+				break;
+			case 1:
+				fileGenre = "Classic Rock";
+				break;
+			case 2:
+				fileGenre = "Country";
+				break;
+			case 3:
+				fileGenre = "Dance";
+				break;
+			case 4:
+				fileGenre = "Disco";
+				break;
+			case 5:
+				fileGenre = "Funk";
+				break;
+			case 6:
+				fileGenre = "Grunge";
+				break;
+			case 7:
+				fileGenre = "Hip-Hop";
+				break;
+			case 8:
+				fileGenre = "Jazz";
+				break;
+			case 9:
+				fileGenre = "Metal";
+				break;
+			case 10:
+				fileGenre = "New Age";
+				break;
+			case 11:
+				fileGenre = "Oldies";
+				break;
+			case 12:
+				fileGenre = "Other";
+				break;
+			case 13:
+				fileGenre = "Pop";
+				break;
+			case 14:
+				fileGenre = "R&B";
+				break;
+			case 15:
+				fileGenre = "Rap";
+				break;
+			case 16:
+				fileGenre = "Reggae";
+				break;
+			case 17:
+				fileGenre = "Rock";
+				break;
+			case 18:
+				fileGenre = "Techno";
+				break;
+			case 19:
+				fileGenre = "Industrial";
+				break;
+			case 20:
+				fileGenre = "Alternative";
+				break;
+			case 21:
+				fileGenre = "Ska";
+				break;
+			case 22:
+				fileGenre = "Death Metal";
+				break;
+			case 23:
+				fileGenre = "Pranks";
+				break;
+			case 24:
+				fileGenre = "Soundtrack";
+				break;
+			case 25:
+				fileGenre = "Euro-Techno";
+				break;
+			case 26:
+				fileGenre = "Ambient";
+				break;
+			case 27:
+				fileGenre = "Trip-Hop";
+				break;
+			case 28:
+				fileGenre = "Vocal";
+				break;
+			case 29:
+				fileGenre = "Jazz+Funk";
+				break;
+			case 30:
+				fileGenre = "Fusion";
+				break;
+			case 31:
+				fileGenre = "Trance";
+				break;
+			case 32:
+				fileGenre = "Classical";
+				break;
+			case 33:
+				fileGenre = "Instrumental";
+				break;
+			case 34:
+				fileGenre = "Acid";
+				break;
+			case 35:
+				fileGenre = "House";
+				break;
+			case 36:
+				fileGenre = "Game";
+				break;
+			case 37:
+				fileGenre = "Sound Clip";
+				break;
+			case 38:
+				fileGenre = "Gospel";
+				break;
+			case 39:
+				fileGenre = "Noise";
+				break;
+			case 40:
+				fileGenre = "Alternative Rock";
+				break;
+			case 41:
+				fileGenre = "Bass";
+				break;
+			case 42:
+				fileGenre = "Soul";
+				break;
+			case 43:
+				fileGenre = "Punk";
+				break;
+			case 44:
+				fileGenre = "Space";
+				break;
+			case 45:
+				fileGenre = "Meditative";
+				break;
+			case 46:
+				fileGenre = "Instrumental Pop";
+				break;
+			case 47:
+				fileGenre = "Instrumental Rock";
+				break;
+			case 48:
+				fileGenre = "Ethnic";
+				break;
+			case 49:
+				fileGenre = "Gothic";
+				break;
+			case 50:
+				fileGenre = "Darkwave";
+				break;
+			case 51:
+				fileGenre = "Techno-Industrial";
+				break;
+			case 52:
+				fileGenre = "Electronic";
+				break;
+			case 53:
+				fileGenre = "Pop-Folk";
+				break;
+			case 54:
+				fileGenre = "Eurodance";
+				break;
+			case 55:
+				fileGenre = "Dream";
+				break;
+			case 56:
+				fileGenre = "Southern Rock";
+				break;
+			case 57:
+				fileGenre = "Comedy";
+				break;
+			case 58:
+				fileGenre = "Cult";
+				break;
+			case 59:
+				fileGenre = "Gangsta";
+				break;
+			case 60:
+				fileGenre = "Top 40";
+				break;
+			case 61:
+				fileGenre = "Christian Rap";
+				break;
+			case 62:
+				fileGenre = "Pop/Funk";
+				break;
+			case 63:
+				fileGenre = "Jungle";
+				break;
+			case 64:
+				fileGenre = "Native US";
+				break;
+			case 65:
+				fileGenre = "Cabaret";
+				break;
+			case 66:
+				fileGenre = "New Wave";
+				break;
+			case 67:
+				fileGenre = "Psychadelic";
+				break;
+			case 68:
+				fileGenre = "Rave";
+				break;
+			case 69:
+				fileGenre = "Showtunes";
+				break;
+			case 70:
+				fileGenre = "Trailer";
+				break;
+			case 71:
+				fileGenre = "Lo-Fi";
+				break;
+			case 72:
+				fileGenre = "Tribal";
+				break;
+			case 73:
+				fileGenre = "Acid Punk";
+				break;
+			case 74:
+				fileGenre = "Acid Jazz";
+				break;
+			case 75:
+				fileGenre = "Polka";
+				break;
+			case 76:
+				fileGenre = "Retro";
+				break;
+			case 77:
+				fileGenre = "Musical";
+				break;
+			case 78:
+				fileGenre = "Rock & Roll";
+				break;
+			case 79:
+				fileGenre = "Hard Rock";
+				break;
+			case 80:
+				fileGenre = "Folk";
+				break;
+			case 81:
+				fileGenre = "Folk-Rock";
+				break;
+			case 82:
+				fileGenre = "National Folk";
+				break;
+			case 83:
+				fileGenre = "Swing";
+				break;
+			case 84:
+				fileGenre = "Fast Fusion";
+				break;
+			case 85:
+				fileGenre = "Bebob";
+				break;
+			case 86:
+				fileGenre = "Latin";
+				break;
+			case 87:
+				fileGenre = "Revival";
+				break;
+			case 88:
+				fileGenre = "Celtic";
+				break;
+			case 89:
+				fileGenre = "Bluegrass";
+				break;
+			case 90:
+				fileGenre = "Avantgarde";
+				break;
+			case 91:
+				fileGenre = "Gothic Rock";
+				break;
+			case 92:
+				fileGenre = "Progressive Rock";
+				break;
+			case 93:
+				fileGenre = "Psychedelic Rock";
+				break;
+			case 94:
+				fileGenre = "Symphonic Rock";
+				break;
+			case 95:
+				fileGenre = "Slow Rock";
+				break;
+			case 96:
+				fileGenre = "Big Band";
+				break;
+			case 97:
+				fileGenre = "Chorus";
+				break;
+			case 98:
+				fileGenre = "Easy Listening";
+				break;
+			case 99:
+				fileGenre = "Acoustic";
+				break;
+			case 100:
+				fileGenre = "Humour";
+				break;
+			case 101:
+				fileGenre = "Speech";
+				break;
+			case 102:
+				fileGenre = "Chanson";
+				break;
+			case 103:
+				fileGenre = "Opera";
+				break;
+			case 104:
+				fileGenre = "Chamber Music";
+				break;
+			case 105:
+				fileGenre = "Sonata";
+				break;
+			case 106:
+				fileGenre = "Symphony";
+				break;
+			case 107:
+				fileGenre = "Booty Bass";
+				break;
+			case 108:
+				fileGenre = "Primus";
+				break;
+			case 109:
+				fileGenre = "Porn Groove";
+				break;
+			case 110:
+				fileGenre = "Satire";
+				break;
+			case 111:
+				fileGenre = "Slow Jam";
+				break;
+			case 112:
+				fileGenre = "Club";
+				break;
+			case 113:
+				fileGenre = "Tango";
+				break;
+			case 114:
+				fileGenre = "Samba";
+				break;
+			case 115:
+				fileGenre = "Folklore";
+				break;
+			case 116:
+				fileGenre = "Ballad";
+				break;
+			case 117:
+				fileGenre = "Power Ballad";
+				break;
+			case 118:
+				fileGenre = "Rhytmic Soul";
+				break;
+			case 119:
+				fileGenre = "Freestyle";
+				break;
+			case 120:
+				fileGenre = "Duet";
+				break;
+			case 121:
+				fileGenre = "Punk Rock";
+				break;
+			case 122:
+				fileGenre = "Drum Solo";
+				break;
+			case 123:
+				fileGenre = "Acapella";
+				break;
+			case 124:
+				fileGenre = "Euro-House";
+				break;
+			case 125:
+				fileGenre = "Dance Hall";
+				break;
+			case 126:
+				fileGenre = "Goa";
+				break;
+			case 127:
+				fileGenre = "Drum & Bass";
+				break;
+			case 128:
+				fileGenre = "Club-House";
+				break;
+			case 129:
+				fileGenre = "Hardcore";
+				break;
+			case 130:
+				fileGenre = "Terror";
+				break;
+			case 131:
+				fileGenre = "Indie";
+				break;
+			case 132:
+				fileGenre = "BritPop";
+				break;
+			case 133:
+				fileGenre = "Negerpunk";
+				break;
+			case 134:
+				fileGenre = "Polsk Punk";
+				break;
+			case 135:
+				fileGenre = "Beat";
+				break;
+			case 136:
+				fileGenre = "Christian Gangsta";
+				break;
+			case 137:
+				fileGenre = "Heavy Metal";
+				break;
+			case 138:
+				fileGenre = "Black Metal";
+				break;
+			case 139:
+				fileGenre = "Crossover";
+				break;
+			case 140:
+				fileGenre = "Contemporary C";
+				break;
+			case 141:
+				fileGenre = "Christian Rock";
+				break;
+			case 142:
+				fileGenre = "Merengue";
+				break;
+			case 143:
+				fileGenre = "Salsa";
+				break;
+			case 144:
+				fileGenre = "Thrash Metal";
+				break;
+			case 145:
+				fileGenre = "Anime";
+				break;
+			case 146:
+				fileGenre = "JPop";
+				break;
+			case 147:
+				fileGenre = "SynthPop";
+				break;
+			default:
+				fileGenre = "Unknown Genre";
+				break;
+		}
+
+		//this.genre = fileGenre; TODO
 	}
 
 	public int getId() {
