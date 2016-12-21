@@ -27,7 +27,7 @@ import java.util.Stack;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.*;
+import javafx.scene.paint.Color;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
@@ -47,6 +47,12 @@ public class MainSceneController {
 
 	public MainSceneController () { }
 
+	/** 
+	 * This method is called once by Main, before initialize.
+	 * It serves two functions:
+	 *  - sets up the stage and stage events
+	 *  - acts as a setter for stage
+	 */
 	public void setupStage(Stage stage, Scene scene) {
 		this.stage = stage;
 		stage.setScene(scene);
@@ -66,25 +72,26 @@ public class MainSceneController {
 	@FXML void initialize() {
 		System.out.println("+ Main Scene initialized");
 		try {
-			assert viewsChoiceBox != null		: "- viewsChoiceBox is null";
-			assert songNameText != null			: "- songNameText is null";
-			assert artistNameText != null		: "- artistNameText is null";
-			assert featuresNamesText != null	: "- featuresNamesText is null";
-			assert albumNameText != null		: "- albumNameText is null";
-			assert timeElapsedtext != null		: "- timeElapsedtext is null";
-			assert songProgressBar != null		: "- songProgressBar is null";
-			assert songLengthText != null		: "- songLengthText is null";
-			assert currentSongPauseButton != null	: "- currentSongPauseButton is null";
-			assert libraryPane != null		: "- libraryPane is null";
-			assert queuePane != null		: "- QueuePane is null";
-			assert searchBox != null		: "- searchBox is null";
+			assert viewsChoiceBox != null  : "- viewsChoiceBox is null";
+			assert songNameText != null  : "- songNameText is null";
+			assert artistNameText != null  : "- artistNameText is null";
+			assert featuresNamesText != null : "- featuresNamesText is null";
+			assert albumNameText != null  : "- albumNameText is null";
+			assert timeElapsedtext != null  : "- timeElapsedtext is null";
+			assert songProgressBar != null  : "- songProgressBar is null";
+			assert songLengthText != null  : "- songLengthText is null";
+			assert currentSongPauseButton != null : "- currentSongPauseButton is null";
+			assert libraryPane != null  : "- libraryPane is null";
+			assert queuePane != null  : "- QueuePane is null";
+			assert searchBox != null  : "- searchBox is null";
 		} catch (AssertionError ae) {
 			System.out.println("FXML assertion failure: " + ae.getMessage());
 			Main.terminate();
 		}
 
-		viewsChoiceBox.getItems().addAll("Albums", "Songs", "Artists", "Genres", "Playlists");
-		viewsChoiceBox.getSelectionModel().selectedItemProperty().addListener( new ChangeListener<String>() {
+		// set up viewsChoiceBox
+		viewsChoiceBox.getItems().setAll("Albums", "Songs", "Artists", "Genres", "Playlists");
+		viewsChoiceBox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
 			@Override public void changed(ObservableValue ov, String t, String t1) {
 				updateBackButtonEnabled(false);
 				updateLibraryPane();
@@ -92,16 +99,10 @@ public class MainSceneController {
 		});
 		viewsChoiceBox.getSelectionModel().selectFirst();
 
-		//TODO VVVVVVVVV
-		updateSongText();//TODO make this update automatically
-
-		//timeElapsedtext.textProperty().bind(Main.musicController.getTimeElapsed());
-		//songProgressBar.  Main.musicController.setSeek(M
-
-		updateVisualiseButtonEnabled(true); //REMOVE TODO
+		updateSongText();
 	}
 
-	/*
+	/**
 	 * PUBLIC UI UPDATE METHODS
 	 */
 
@@ -135,23 +136,35 @@ public class MainSceneController {
 			VBox vBox = new VBox();
 			queuePane.getChildren().setAll(vBox);
 			for (Song song : queue) {
-				vBox.getChildren().addAll(generateSongBox(song));
+				vBox.getChildren().addAll(generateBox(song));
 			}
 		}
-		updateClearQueueButtonEnabled(queue.size() > 1);
-		updateSkipButtonEnabled(queue.size() > 1);
 	}
 
 	public void updateLibraryPane() {
 		String viewString = viewsChoiceBox.getSelectionModel().getSelectedItem().toString();
 		updateBackButtonEnabled(false);
+		searchBox.clear();
+
 		switch (viewString) {
-			case "Albums":		showHasSongsView(Album.getAllFromDatabase()); break;
-			case "Songs":		showSongsView(Song.getAllFromDatabase()); break;
-			case "Artists":		showHasAlbumsView(Artist.getAllFromDatabase()); break;
-			case "Genres":		showHasAlbumsView(Genre.getAllFromDatabase()); break;
-			case "Playlists":	showHasSongsView(Playlist.getAllFromDatabase()); break;
-			default:			System.out.println("- unknown viewsChoiceBox item"); break;
+			case "Albums":
+				libraryPane.getChildren().setAll(generateListOfHasSongs(Album.getAllFromDatabase()));
+				break;
+			case "Songs":
+				libraryPane.getChildren().setAll(generateListOfSongs(Song.getAllFromDatabase()));
+				break;
+			case "Artists":
+				libraryPane.getChildren().setAll(generateListOfHasAlbums(Artist.getAllFromDatabase()));
+				break;
+			case "Genres":
+				libraryPane.getChildren().setAll(generateListOfHasAlbums(Genre.getAllFromDatabase()));
+				break;
+			case "Playlists":
+				libraryPane.getChildren().setAll(generateListOfHasSongs(Playlist.getAllFromDatabase()));
+				break;
+			default:
+				System.out.println("- unknown viewsChoiceBox item");
+				break;
 		}
 	}
 
@@ -183,8 +196,8 @@ public class MainSceneController {
 		playModeButton.setText(text);
 	}
 
-	/*
-	 * ON UI ACTION METHODS
+	/**
+	 * On UI Action Methods
 	 */
 
 	@FXML void onBackButtonPressed() {
@@ -209,7 +222,40 @@ public class MainSceneController {
 	}
 
 	@FXML void onSearch() {
-		showSearchResultsView(searchBox.getText());
+		String query = searchBox.getText();
+		if (query.equals("")) return;
+		updateBackButtonEnabled(true);
+		libraryPane.getChildren().clear();
+		VBox searchResults = new VBox();
+		libraryPane.getChildren().add(searchResults);
+		/*
+		ArrayList<?>[] modelLists = new ArrayList<?>[5];
+		modelLists[0] = Song.getAllFromDatabase();
+		modelLists[1] = Album.getAllFromDatabase();
+		modelLists[2] = Artist.getAllFromDatabase();
+		modelLists[3] = Genre.getAllFromDatabase();
+		modelLists[4] = Playlist.getAllFromDatabase();
+
+		String[] modelNames = new String[modelLists.length];
+		modelNames[0] = "songs";
+		modelNames[1] = "";
+		modelNames[2] = "";
+		modelNames[3] = "";
+		modelNames[4] = "";
+		//SONGS
+		for (int i = 0; i < modelLists.length; i++) {
+			VBox box = new VBox();
+			boolean foundAResult = false;
+			for (int j = 0; j < modelLists[i].size(); j++) {
+				if (modelLists[i].get(j).toString().toLowerCase().contains(query.toLowerCase())) {
+					box.getChildren().add(generateBox(modelLists[i].get(j)));
+					foundAResult = true;
+				}
+			}
+			Text text = new Text(foundAResult ? "Search results for '" + modelNames[i] + "' in songs:" : "No songs found for '" + modelNames[i] + "'.");
+			searchResults.getChildren().addAll(text, box);//same
+		}
+		*/
 	}
 
 	@FXML void onNewFileClicked() {
@@ -228,114 +274,53 @@ public class MainSceneController {
 		Main.musicController.clearQueue();
 	}
 
-	/*
-	 * BEHIND THE SCENES
+	/*========================================
+	|| 					||
+	||					||
+	||    EVERYTHING PAST THIS BOX IS	||
+	|| 	CODE FOR *_GENERATORS_*		||
+	|| 					||
+	|| 					||
+	========================================*/
+
+	/**
+	 * Create a list view of songs
+	 * just calls generateBox for a list of songs
+	 * and puts them into a V-Box
 	 */
-
-	private void showSearchResultsView(String query) {
-		if (query.equals("")) return;
-		updateBackButtonEnabled(true);
-		libraryPane.getChildren().clear();
-		VBox searchResults = new VBox();
-		libraryPane.getChildren().add(searchResults);
-
-		//SONGS
-		{
-			VBox songsBox = new VBox();
-			ArrayList<Song> songResults = new ArrayList<>();
-			for (Song s : Song.getAllFromDatabase()) {
-				if (s.toString().toLowerCase().contains(query.toLowerCase())) {
-					songResults.add(s);
-					songsBox.getChildren().add(generateSongBox(s));
-				}
-			}
-			Text songsText = new Text(songResults.size() > 0 ? "Search results for '" + query + "' in songs:" : "No songs found for '" + query + "'.");
-			searchResults.getChildren().addAll(songsText, songsBox);
-		}
-
-		//ALBUMS
-		{
-			VBox albumsBox = new VBox();
-			ArrayList<Album> albumResults = new ArrayList<>();
-			for (Album a : Album.getAllFromDatabase()) {
-				if (a.toString().toLowerCase().contains(query.toLowerCase())) {
-					albumResults.add(a);
-					albumsBox.getChildren().add(generateHasSongsBox(a));
-				}
-			}
-			Text albumsText = new Text(albumResults.size() > 0 ? "Search results for '" + query + "' in albums:" : "No alubms found for '" + query + "'.");
-			searchResults.getChildren().addAll(albumsText, albumsBox);
-		}
-
-		//ARTISTS
-		{
-			VBox artistsBox = new VBox();
-			ArrayList<Artist> artistResults = new ArrayList<>();
-			for (Artist a : Artist.getAllFromDatabase()) {
-				if (a.toString().toLowerCase().contains(query.toLowerCase())) {
-					artistResults.add(a);
-					artistsBox.getChildren().add(generateHasAlbumsBox(a));
-				}
-			}
-			Text artistsText = new Text(artistResults.size() > 0 ? "Search results for '" + query + "' in artists:" : "No artists found for '" + query + "'.");
-			searchResults.getChildren().addAll(artistsText, artistsBox);
-		}
-
-		//GENRES
-		{
-			VBox genresBox = new VBox();
-			ArrayList<Genre> genreResults = new ArrayList<>();
-			for (Genre g : Genre.getAllFromDatabase()) {
-				if (g.toString().toLowerCase().contains(query.toLowerCase())) {
-					genreResults.add(g);
-					genresBox.getChildren().add(generateHasAlbumsBox(g));
-				}
-			}
-			Text genresText = new Text(genreResults.size() > 0 ? "Search results for '" + query + "' in genres:" : "No genres found for '" + query + "'.");
-			searchResults.getChildren().addAll(genresText, genresBox);
-		}
-
-		//PLAYLITS
-		{
-			VBox playlistsBox = new VBox();
-			ArrayList<Playlist> playlistResults = new ArrayList<>();
-			for (Playlist p : Playlist.getAllFromDatabase()) {
-				if (p.toString().toLowerCase().contains(query.toLowerCase())) {
-					playlistResults.add(p);
-					playlistsBox.getChildren().add(generateHasSongsBox(p));
-				}
-			}
-			Text playlistText = new Text(playlistResults.size() > 0 ? "Search results for '" + query + "' in playlists:" : "No playlists found for '" + query + "'.");
-			searchResults.getChildren().addAll(playlistText, playlistsBox);
-		}
-	}
-
-	private void showSongsView(List<Song> songList) {
-		libraryPane.getChildren().clear();
+	private VBox generateListOfSongs(List<Song> songList) {
 		VBox vBox = new VBox();
-		libraryPane.getChildren().addAll(vBox);
-		for (Song song : songList) vBox.getChildren().addAll(generateSongBox(song));
+		for (Song song : songList) vBox.getChildren().addAll(generateBox(song));
+		return vBox;
 	}
 
-	private void showHasSongsView(List<? extends HasSongs> hasSongsList) {
-		libraryPane.getChildren().clear();
-		TilePane tilePane = new TilePane();
-		libraryPane.getChildren().addAll(tilePane);
-		for (HasSongs hs : hasSongsList) tilePane.getChildren().addAll(generateHasSongsBox(hs));
-	}
-
-	private void showHasAlbumsView(List<? extends HasAlbums> hasAlbumsList) {
-		libraryPane.getChildren().clear();
-		TilePane tilePane = new TilePane();
-		libraryPane.getChildren().addAll(tilePane);
-		for (HasAlbums ha : hasAlbumsList) tilePane.getChildren().addAll(generateHasAlbumsBox(ha));
-	}
-
-	/*
-	 * BOX GENERATORS
+	/**
+	 * Create a tile view of Albums OR playlists
+	 * just calls generateBox for a list of Albums OR playlists
+	 * and puts them into a Tile-Pane
 	 */
+	private TilePane generateListOfHasSongs(List<? extends HasSongs> hasSongsList) {
+		TilePane tilePane = new TilePane();
+		for (HasSongs hs : hasSongsList) tilePane.getChildren().addAll(generateBox(hs));
+		return tilePane;
+	}
 
-	private HBox generateSongBox(Song song) {
+	/**
+	 * Create a tile view of Genres OR Artists
+	 * just calls generateBox for a list of Genres OR Artists 
+	 * and puts them into a Tile-Pane
+	 * TODO merge above??????????
+	 */
+	private TilePane generateListOfHasAlbums(List<? extends HasAlbums> hasAlbumsList) {
+		TilePane tilePane = new TilePane();
+		for (HasAlbums ha : hasAlbumsList) tilePane.getChildren().addAll(generateBox(ha));
+		return tilePane;
+	}
+
+	/**
+	 * Create a box for a song
+	 */
+	private HBox generateBox(Song song) {
 		HBox hBox = new HBox();
 		Button playButton = new Button(">");
 		playButton.setOnAction(event -> Main.musicController.skipCurrentSongAndPlay(song));
@@ -350,8 +335,10 @@ public class MainSceneController {
 		return hBox;
 	}
 
-	//create a box for an artist OR genre
-	private VBox generateHasAlbumsBox(HasAlbums hasAlbums) {
+	/**
+	 * Create a box for an artist OR genre
+	 */
+	private VBox generateBox(HasAlbums hasAlbums) {
 		VBox vBox = new VBox();
 		vBox.setPadding(new Insets(4));
 		vBox.setSpacing(4);
@@ -364,7 +351,9 @@ public class MainSceneController {
 		albumCount.setFill(greyText);
 
 		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			showHasSongsView(/*hasAlbums.toString(),*/ hasAlbums.getAlbums());
+			Text text = new Text(hasAlbums.toString() + ":");
+			libraryPane.getChildren().setAll(text, generateListOfHasSongs(hasAlbums.getAlbums()));
+
 			updateBackButtonEnabled(true);
 			event.consume();
 		});
@@ -373,8 +362,11 @@ public class MainSceneController {
 		return vBox;
 	}
 
-	//create a box for a playlist OR album
-	private VBox generateHasSongsBox(HasSongs hasSongs) {
+	/**
+	 * Create a box for a playlist OR album
+	 * TODO merge above????????
+	 */
+	private VBox generateBox(HasSongs hasSongs) {
 		VBox vBox = new VBox();
 		vBox.setPadding(new Insets(4));
 		vBox.setSpacing(4);
@@ -401,7 +393,9 @@ public class MainSceneController {
 		songCount.setFill(greyText);
 
 		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			showSongsView(/*hasSongs.toString(),*/ hasSongs.getSongs());
+			Text text = new Text(hasSongs.toString() + ":");
+			libraryPane.getChildren().setAll(text, generateListOfSongs(hasSongs.getSongs()));
+
 			updateBackButtonEnabled(true);
 			event.consume();
 		});

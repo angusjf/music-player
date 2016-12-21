@@ -55,6 +55,8 @@ class MusicController {
 		queue.add(song);
 		Main.mainSceneController.updateSongQueueContents();
 		Main.mainSceneController.updatePlayButtonEnabled(true);
+        Main.mainSceneController.updateSongText();
+        Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
 	public void addToQueueEnd(Album album) {
@@ -67,8 +69,10 @@ class MusicController {
 		} else {
 			queue.add(1, song);
 		}
-		Main.mainSceneController.updatePlayButtonEnabled(queue.size() > 0);
 		Main.mainSceneController.updateSongQueueContents();
+		Main.mainSceneController.updatePlayButtonEnabled(true);
+        Main.mainSceneController.updateSongText();
+        Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
 	public void addToQueueNext(Album album) {
@@ -99,6 +103,7 @@ class MusicController {
 			queue.remove(0);
 			Main.mainSceneController.updatePlayButtonEnabled(false);
 			Main.mainSceneController.updateSongQueueContents();
+            Main.mainSceneController.updateSongText();
 		}
 
 		if (queue.size() > 0) { //checks there is a next song to play TODO
@@ -122,6 +127,7 @@ class MusicController {
 			queue.add(temp);
 		}
 		Main.mainSceneController.updateSongQueueContents();
+		Main.mainSceneController.updateClearQueueButtonEnabled(false);
 	}
 
 	//PAUSE / PLAY
@@ -208,6 +214,8 @@ class MusicController {
 		mediaPlayer.setAudioSpectrumInterval(sampleInterval);
 		mediaPlayer.setAudioSpectrumNumBands(numberOfBands);
 		setPaused(false);
+
+        Main.mainSceneController.updateVisualiseButtonEnabled(true);
 	}
 
 	private void setSong() {
