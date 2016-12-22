@@ -157,7 +157,6 @@ public class Album implements HasSongs {
 		assert statement != null;
 
 		ResultSet results = Main.database.runSelectStatement(statement);
-
 		if (results != null) {
 			try {
 				while (results.next()) {
