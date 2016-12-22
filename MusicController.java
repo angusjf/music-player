@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import javafx.scene.media.Media;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -59,8 +60,8 @@ class MusicController {
         Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
-	public void addToQueueEnd(Album album) {
-		for (Song song : album.getSongs()) addToQueueEnd(song); // ^
+	public void addToQueueEnd(HasSongs hasSongs) {
+		for (Song song : hasSongs.getSongs()) addToQueueEnd(song); // ^
 	}
 
 	public void addToQueueNext(Song song) {
@@ -71,16 +72,31 @@ class MusicController {
 		}
 		Main.mainSceneController.updateSongQueueContents();
 		Main.mainSceneController.updatePlayButtonEnabled(true);
-        Main.mainSceneController.updateSongText();
-        Main.mainSceneController.updateClearQueueButtonEnabled(true);
+		Main.mainSceneController.updateSongText();
+		Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
-	public void addToQueueNext(Album album) {
-		for (Song song : album.getSongs()) addToQueueNext (song); //^
+	public void addToQueueNext(HasSongs hasSongs) {
+		if (queue.size() == 0) {
+			queue.addAll(0, hasSongs.getSongs());
+		} else {
+			queue.addAll(1, hasSongs.getSongs());
+		}
+		Main.mainSceneController.updateSongQueueContents();
+		Main.mainSceneController.updatePlayButtonEnabled(true);
+		Main.mainSceneController.updateSongText();
+		Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
 	public void skipCurrentSongAndPlay(Song song) {
-		addToQueueNext(song);
+		addToQueueNext(song); // BROKEN TODO skips first song
+		if (queue.size() > 1)
+			nextSong();
+		setPaused(false);
+	}
+
+	public void skipCurrentSongAndPlay(HasSongs hasSongs) {
+		addToQueueNext(hasSongs);
 		if (queue.size() > 1)
 			nextSong();
 		setPaused(false);
@@ -210,9 +226,9 @@ class MusicController {
 		if (mediaPlayer != null) mediaPlayer.stop();
 		mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
-		mediaPlayer.setAudioSpectrumListener(asl);
-		mediaPlayer.setAudioSpectrumInterval(sampleInterval);
-		mediaPlayer.setAudioSpectrumNumBands(numberOfBands);
+		//mediaPlayer.setAudioSpectrumListener(asl);
+		//mediaPlayer.setAudioSpectrumInterval(sampleInterval);
+		//mediaPlayer.setAudioSpectrumNumBands(numberOfBands);
 		setPaused(false);
 
         Main.mainSceneController.updateVisualiseButtonEnabled(true);

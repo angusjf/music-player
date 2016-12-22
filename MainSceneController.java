@@ -30,6 +30,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 
 public class MainSceneController {
 
@@ -47,7 +50,7 @@ public class MainSceneController {
 
 	public MainSceneController () { }
 
-	/** 
+	/**
 	 * This method is called once by Main, before initialize.
 	 * It serves two functions:
 	 *  - sets up the stage and stage events
@@ -72,18 +75,18 @@ public class MainSceneController {
 	@FXML void initialize() {
 		System.out.println("+ Main Scene initialized");
 		try {
-			assert viewsChoiceBox != null  : "- viewsChoiceBox is null";
-			assert songNameText != null  : "- songNameText is null";
-			assert artistNameText != null  : "- artistNameText is null";
+			assert viewsChoiceBox != null : "- viewsChoiceBox is null";
+			assert songNameText != null : "- songNameText is null";
+			assert artistNameText != null : "- artistNameText is null";
 			assert featuresNamesText != null : "- featuresNamesText is null";
-			assert albumNameText != null  : "- albumNameText is null";
-			assert timeElapsedtext != null  : "- timeElapsedtext is null";
-			assert songProgressBar != null  : "- songProgressBar is null";
-			assert songLengthText != null  : "- songLengthText is null";
+			assert albumNameText != null : "- albumNameText is null";
+			assert timeElapsedtext != null : "- timeElapsedtext is null";
+			assert songProgressBar != null : "- songProgressBar is null";
+			assert songLengthText != null : "- songLengthText is null";
 			assert currentSongPauseButton != null : "- currentSongPauseButton is null";
-			assert libraryPane != null  : "- libraryPane is null";
-			assert queuePane != null  : "- QueuePane is null";
-			assert searchBox != null  : "- searchBox is null";
+			assert libraryPane != null : "- libraryPane is null";
+			assert queuePane != null : "- QueuePane is null";
+			assert searchBox != null : "- searchBox is null";
 		} catch (AssertionError ae) {
 			System.out.println("FXML assertion failure: " + ae.getMessage());
 			Main.terminate();
@@ -102,9 +105,14 @@ public class MainSceneController {
 		updateSongText();
 	}
 
-	/**
-	 * PUBLIC UI UPDATE METHODS
-	 */
+	/*========================================
+	||                                      ||
+	||                                      ||
+	||     EVERYTHING PAST THIS BOX IS      ||
+	||      CODE FOR *_UPDATING UI_*        ||
+	||                                      ||
+	||                                      ||
+	========================================*/
 
 	public void updateSongText() {
 		Song song = Main.musicController.getCurrentSong();
@@ -136,7 +144,7 @@ public class MainSceneController {
 			VBox vBox = new VBox();
 			queuePane.getChildren().setAll(vBox);
 			for (Song song : queue) {
-				vBox.getChildren().addAll(generateBox(song));
+				vBox.getChildren().addAll(generateBox(song)); //TODO make a more specific method
 			}
 		}
 	}
@@ -196,9 +204,14 @@ public class MainSceneController {
 		playModeButton.setText(text);
 	}
 
-	/**
-	 * On UI Action Methods
-	 */
+	/*========================================
+	||                                      ||
+	||                                      ||
+	||    EVERYTHING PAST THIS BOX IS       ||
+	||     CODE FOR *_ON UI ACTIONS_*       ||
+	||                                      ||
+	||                                      ||
+	========================================*/
 
 	@FXML void onBackButtonPressed() {
 		updateBackButtonEnabled(false);
@@ -225,11 +238,11 @@ public class MainSceneController {
 		String query = searchBox.getText();
 		if (query.equals("")) return;
 		updateBackButtonEnabled(true);
-		libraryPane.getChildren().clear();
 		VBox searchResults = new VBox();
-		libraryPane.getChildren().add(searchResults);
-		/*
-		ArrayList<?>[] modelLists = new ArrayList<?>[5];
+		libraryPane.getChildren().setAll(searchResults);
+		/* this is a broken because an arraylist<?> cannot polymorph
+		//eh
+		List<?>[] modelLists = new List<?>[5];
 		modelLists[0] = Song.getAllFromDatabase();
 		modelLists[1] = Album.getAllFromDatabase();
 		modelLists[2] = Artist.getAllFromDatabase();
@@ -242,7 +255,7 @@ public class MainSceneController {
 		modelNames[2] = "";
 		modelNames[3] = "";
 		modelNames[4] = "";
-		//SONGS
+
 		for (int i = 0; i < modelLists.length; i++) {
 			VBox box = new VBox();
 			boolean foundAResult = false;
@@ -263,9 +276,7 @@ public class MainSceneController {
 		fileChooser.setTitle("Choose a Music File");
 		List<File> list = fileChooser.showOpenMultipleDialog(stage);
 		if (list != null) {
-			for (File file : list) {
-				Song song = new Song(file);
-			}
+			for (File file : list) new SongFileImporter(file);
 		}
 		updateLibraryPane();
 	}
@@ -275,12 +286,12 @@ public class MainSceneController {
 	}
 
 	/*========================================
-	|| 					||
-	||					||
-	||    EVERYTHING PAST THIS BOX IS	||
-	|| 	CODE FOR *_GENERATORS_*		||
-	|| 					||
-	|| 					||
+	||                                      ||
+	||                                      ||
+	||    EVERYTHING PAST THIS BOX IS       ||
+	||      CODE FOR *_GENERATORS_*         ||
+	||                                      ||
+	||                                      ||
 	========================================*/
 
 	/**
@@ -307,7 +318,7 @@ public class MainSceneController {
 
 	/**
 	 * Create a tile view of Genres OR Artists
-	 * just calls generateBox for a list of Genres OR Artists 
+	 * just calls generateBox for a list of Genres OR Artists
 	 * and puts them into a Tile-Pane
 	 * TODO merge above??????????
 	 */
@@ -326,12 +337,30 @@ public class MainSceneController {
 		playButton.setOnAction(event -> Main.musicController.skipCurrentSongAndPlay(song));
 		Button addButton = new Button("+");
 		addButton.setOnAction(event -> Main.musicController.addToQueueEnd(song));
+		Text songNumberText = new Text(song.getTrackNumber() + ". ");
 		Text songNameText = new Text(song.toString() + " - ");
 		Text artistNameText = new Text(song.getArtist().toString());
 		Text featuresNamesText = new Text(song.getFeatures().size() != 0 ? " (ft. " + String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList())) + ") - " : " - ");
 		Text albumNameText = new Text(song.getAlbum().toString() + " - ");
 		Text songLengthText = new Text(song.getLength());
-		hBox.getChildren().addAll(playButton, addButton, songNameText, artistNameText, featuresNamesText, albumNameText, songLengthText);
+		hBox.getChildren().addAll(playButton, addButton, songNumberText, songNameText, artistNameText, featuresNamesText, albumNameText, songLengthText);
+		// MOUSE_ENTERED
+		hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+
+			final ContextMenu contextMenu = new ContextMenu();
+			contextMenu.setOnShowing(e -> {
+				System.out.println("showing");
+			});
+
+			MenuItem remove = new MenuItem("Remove");
+			remove.setOnAction(e -> {
+				System.out.println("removing " + song);
+			});
+
+			contextMenu.getItems().setAll(remove);
+
+			event.consume();
+		});
 		return hBox;
 	}
 
@@ -363,13 +392,13 @@ public class MainSceneController {
 	}
 
 	/**
-	 * Create a box for a playlist OR album
+	 * Create a box for a playlist OR album.
 	 * TODO merge above????????
+	 * OR rename all generateBox methods to be more specific AND remove meaningless polymorphism
 	 */
 	private VBox generateBox(HasSongs hasSongs) {
 		VBox vBox = new VBox();
 		vBox.setPadding(new Insets(4));
-		vBox.setSpacing(4);
 
 		GridPane imageBox = new GridPane();
 
@@ -393,8 +422,27 @@ public class MainSceneController {
 		songCount.setFill(greyText);
 
 		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			Text text = new Text(hasSongs.toString() + ":");
-			libraryPane.getChildren().setAll(text, generateListOfSongs(hasSongs.getSongs()));
+			ImageView pic = new ImageView(songs.get(0).getAlbum().getPicture());
+			pic.setFitHeight(192);
+			pic.setFitWidth(192);
+			Text type = new Text("Album");
+			Text title = new Text(hasSongs.toString());
+			Text desc = new Text(
+				"By " + songs.get(0).getAlbum().getArtist() + " - "
+			 	+ songs.get(0).getAlbum().getYear() + " - "
+				+ songs.get(0).getAlbum().getNumberOfSongs() + " songs, " + songs.get(0).getAlbum().getLength()
+			);
+			Button playAll = new Button("Play all from " + hasSongs.toString());
+			playAll.setOnAction(a -> Main.musicController.skipCurrentSongAndPlay(hasSongs));
+			Button addAll = new Button("Add all from " + hasSongs.toString() + " to queue");
+
+			VBox inPane = new VBox();
+			HBox topDescription = new HBox();
+			VBox sideDescription = new VBox();
+			sideDescription.getChildren().setAll(type, title, desc, playAll, addAll);
+			topDescription.getChildren().setAll(pic, sideDescription);
+			inPane.getChildren().setAll(topDescription, generateListOfSongs(hasSongs.getSongs()));
+			libraryPane.getChildren().setAll(inPane);
 
 			updateBackButtonEnabled(true);
 			event.consume();
