@@ -278,7 +278,6 @@ public class MainSceneController {
 		if (list != null) {
 			for (File file : list) new SongFileImporter(file);
 		}
-		updateLibraryPane();
 	}
 
 	@FXML void onClearQueuePressed() {

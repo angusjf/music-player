@@ -44,8 +44,13 @@ public class SongFileImporter {
 					//fileYear = change.getValueAdded().toString();
 					gotTitle = true;
 				}
-				if (gotImage && gotAlbum && gotArtist && gotYear && gotAlbum && gotGenre && gotTitle) {
+				if (gotImage && gotAlbum && gotArtist && gotYear && gotGenre && gotTitle) {
 					metadataExtractionComplete();
+				} else {
+					System.out.println("Waiting for: image=" + gotImage + " album=" + gotAlbum + " artist=" + gotArtist
+						+ " year=" + gotYear + " genre=" + gotGenre + " title=" + gotTitle
+					);
+					System.out.println(mediaPlayer.getMedia().getMetadata());
 				}
 			}
 		});
@@ -149,15 +154,14 @@ public class SongFileImporter {
 	}
 
 	private int getAlbumId(String albumTitle, int artistId, int genreId, String albumYear) {
+
 		PreparedStatement statement1 = Main.database.createStatement("SELECT Id FROM Albums WHERE Title = ? AND ArtistId = ?");
 		try {
 			statement1.setString(1, albumTitle);
-			statement1.setInt(1, artistId);
+			statement1.setInt(2, artistId);
 		}  catch (SQLException ex) {
 			System.out.println("- setting ? error");
 		}
-
-		System.out.println(">>>>>>>>>>>>>>>" + statement1);
 
 		ResultSet results = Main.database.runSelectStatement(statement1);
 		if (results != null) {
@@ -165,17 +169,19 @@ public class SongFileImporter {
 				if (results.next()) {
 					return results.getInt("Id");
 				} else {
-					PreparedStatement statement2 = Main.database.createStatement("INSERT INTO Albums (ArtistId, GenreId, Title, Year) VALUES (?, ?, ?, ?)");
+					//PreparedStatement statement2 = Main.database.createStatement("INSERT INTO Albums (ArtistId, GenreId, Title, Year) VALUES (?, ?, ?, ?)");
+					PreparedStatement statement2 = Main.database.createStatement(
+						"INSERT INTO Albums (ArtistId, GenreId, Title, Year) VALUES (?, ?, ?, ?)");
 					try {
 						statement2.setInt(1, artistId);
 						statement2.setInt(2, genreId);
-						statement2.setString(1, albumTitle);
-						statement2.setString(2, albumYear);
+						statement2.setString(3, albumTitle);
+						statement2.setString(4, albumYear);
 					} catch (SQLException ex) {
 						System.out.println("- setting ? error");
 					}
 					Main.database.runUpdateStatement(statement2);
-					getAlbumId(albumTitle, artistId, genreId, albumYear);
+					//getAlbumId(albumTitle, artistId, genreId, albumYear);
 				}
 			} catch (SQLException resultsexception) {
 				System.out.println("- Database result processing error: " + resultsexception.getMessage());
