@@ -48,16 +48,12 @@
                         </TextField>
                      </children>
                   </HBox>
-                  <ScrollPane style="-fx-border-color: #aaa; -fx-border-width: 1; -fx-border-radius: 3;" VBox.vgrow="ALWAYS">
+                  <ScrollPane VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                      <content>
-                        <AnchorPane fx:id="libraryPane" prefHeight="200.0" prefWidth="200.0">
-                           <padding>
-                              <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
-                           </padding>
-                        </AnchorPane>
+                        <VBox fx:id="libraryPane" prefHeight="189.0" prefWidth="156.0" />
                      </content>
                   </ScrollPane>
                </children>
@@ -162,7 +158,7 @@
                   </HBox>
                   <ScrollPane VBox.vgrow="ALWAYS">
                      <content>
-                        <AnchorPane fx:id="queuePane" prefHeight="355.0" prefWidth="479.0" style="-fx-border-color: #aaa; -fx-border-width: 1; -fx-border-radius: 3;">
+                        <AnchorPane fx:id="queuePane" prefHeight="89.0" prefWidth="90.0">
                            <padding>
                               <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
                            </padding>

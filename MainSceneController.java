@@ -33,6 +33,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.text.Font;
 
 public class MainSceneController {
 
@@ -41,7 +42,8 @@ public class MainSceneController {
 	private Stage stage;
 	private final Color greyText = Color.rgb(130, 130, 130);
 
-	@FXML private AnchorPane libraryPane, queuePane;
+	@FXML private VBox libraryPane;
+	@FXML private AnchorPane queuePane;
 	@FXML private Button backButton, playModeButton, currentSongPauseButton, currentSongSkipButton, visualiseButton, clearQueueButton;
 	@FXML private Text albumNameText, artistNameText, featuresNamesText, songLengthText, songNameText, timeElapsedtext;
 	@FXML private TextField searchBox;
@@ -275,6 +277,7 @@ public class MainSceneController {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Choose a Music File");
 		List<File> list = fileChooser.showOpenMultipleDialog(stage);
+
 		if (list != null) {
 			for (File file : list) new SongFileImporter(file);
 		}
@@ -336,15 +339,18 @@ public class MainSceneController {
 		playButton.setOnAction(event -> Main.musicController.skipCurrentSongAndPlay(song));
 		Button addButton = new Button("+");
 		addButton.setOnAction(event -> Main.musicController.addToQueueEnd(song));
-		Text songNumberText = new Text(song.getTrackNumber() + ". ");
-		Text songNameText = new Text(song.toString() + " - ");
-		Text artistNameText = new Text(song.getArtist().toString());
-		Text featuresNamesText = new Text(song.getFeatures().size() != 0 ? " (ft. " + String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList())) + ") - " : " - ");
-		Text albumNameText = new Text(song.getAlbum().toString() + " - ");
-		Text songLengthText = new Text(song.getLength());
-		hBox.getChildren().addAll(playButton, addButton, songNumberText, songNameText, artistNameText, featuresNamesText, albumNameText, songLengthText);
+		hBox.getChildren().addAll(
+			playButton,
+			addButton,
+			new Text(song.getTrackNumber() + ". "),
+			new Text(song.toString() + " - "),
+			new Text(song.getArtist().toString()),
+			new Text(song.getFeatures().size() != 0 ? " (ft. " + String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList())) + ") - " : " - "),
+			new Text(song.getAlbum().toString() + " - "),
+			new Text(song.getLength())
+		);
 		// MOUSE_ENTERED
-		hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+		/*hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 
 			final ContextMenu contextMenu = new ContextMenu();
 			contextMenu.setOnShowing(e -> {
@@ -359,7 +365,7 @@ public class MainSceneController {
 			contextMenu.getItems().setAll(remove);
 
 			event.consume();
-		});
+		});*/
 		return hBox;
 	}
 
@@ -410,6 +416,7 @@ public class MainSceneController {
 				imageBox.add(im, i < 2 ? 0 : 1, i % 2);
 			}
 		} else {
+			System.out.println(">>>>>>>> " + songs.get(0).getAlbum().getPicture());
 			ImageView im = new ImageView(songs.size() > 0 ? songs.get(0).getAlbum().getPicture() : "resources/images/error.png");
 			im.setFitHeight(128);
 			im.setFitWidth(128);
@@ -421,24 +428,28 @@ public class MainSceneController {
 		songCount.setFill(greyText);
 
 		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+			VBox inPane = new VBox(); //ALL
+			HBox topDescription = new HBox(); //TOP
+			VBox sideDescription = new VBox(); //TOP RIGHT
+
+			{
+				Text type = generateHeader1("Album");
+				Text title = generateHeader2(hasSongs.toString());
+				Text desc = new Text(
+					"By " + songs.get(0).getAlbum().getArtist() + " - "
+					+ songs.get(0).getAlbum().getYear() + " - "
+					+ songs.get(0).getAlbum().getNumberOfSongs() + " songs, " + songs.get(0).getAlbum().getLength()
+				);
+				Button playAll = new Button("Play all from " + hasSongs.toString());
+				playAll.setOnAction(a -> Main.musicController.skipCurrentSongAndPlay(hasSongs));
+				Button addAll = new Button("Add all from " + hasSongs.toString() + " to queue");
+				sideDescription.getChildren().setAll(type, title, desc, playAll, addAll);
+			}
+
 			ImageView pic = new ImageView(songs.get(0).getAlbum().getPicture());
 			pic.setFitHeight(192);
 			pic.setFitWidth(192);
-			Text type = new Text("Album");
-			Text title = new Text(hasSongs.toString());
-			Text desc = new Text(
-				"By " + songs.get(0).getAlbum().getArtist() + " - "
-			 	+ songs.get(0).getAlbum().getYear() + " - "
-				+ songs.get(0).getAlbum().getNumberOfSongs() + " songs, " + songs.get(0).getAlbum().getLength()
-			);
-			Button playAll = new Button("Play all from " + hasSongs.toString());
-			playAll.setOnAction(a -> Main.musicController.skipCurrentSongAndPlay(hasSongs));
-			Button addAll = new Button("Add all from " + hasSongs.toString() + " to queue");
 
-			VBox inPane = new VBox();
-			HBox topDescription = new HBox();
-			VBox sideDescription = new VBox();
-			sideDescription.getChildren().setAll(type, title, desc, playAll, addAll);
 			topDescription.getChildren().setAll(pic, sideDescription);
 			inPane.getChildren().setAll(topDescription, generateListOfSongs(hasSongs.getSongs()));
 			libraryPane.getChildren().setAll(inPane);
@@ -449,5 +460,17 @@ public class MainSceneController {
 
 		vBox.getChildren().addAll(imageBox, name, songCount);
 		return vBox;
+	}
+
+	private Text generateHeader1(String s) {
+		Text text = new Text(s);
+		text.setFont(new Font(20));
+		return text;
+	}
+
+	private Text generateHeader2(String s) {
+		Text text = new Text(s);
+		text.setFont(new Font(16));
+		return text;
 	}
 }

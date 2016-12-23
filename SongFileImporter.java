@@ -14,49 +14,51 @@ import java.sql.SQLException;
 
 public class SongFileImporter {
 
-	boolean gotImage, gotAlbum, gotArtist, gotYear, gotGenre, gotTitle;
+	boolean gotImage, gotAlbum, gotArtist, gotYear = true /*TODO*/, gotGenre, gotTitle, gotTrackNumber = true /*TODO*/, gotLength = true /*TODO*/;
+	boolean done = false;
 	private MediaPlayer mediaPlayer;
 	private File file;
 
 	public SongFileImporter(File file) {
+		System.out.println("£ importing file " + file.getPath());
+
 		this.file = file;
 		mediaPlayer = new MediaPlayer(new Media(file.toURI().toString()));
-		mediaPlayer.play(); //TODO
 
 		mediaPlayer.getMedia().getMetadata().addListener((MapChangeListener<String, Object>) change -> {
-			if(change.wasAdded()) {
+			if (change.wasAdded() && !done) {
 				if (change.getKey().equals("image")) {
-					//setPicture((Image)change.getValueAdded());
 					gotImage = true;
 				} else if (change.getKey().equals("album")) {
-					//fileName = change.getValueAdded().toString();
 					gotAlbum = true;
 				} else if (change.getKey().equals("artist")) {
-					//fileYear = change.getValueAdded().toString();
 					gotArtist = true;
 				} else if (change.getKey().equals("year")) {
-					//fileYear = change.getValueAdded().toString();
 					gotYear = true;
 				} else if (change.getKey().equals("genre")) {
-					//fileYear = change.getValueAdded().toString();
 					gotGenre = true;
 				} else if (change.getKey().equals("title")) {
-					//fileYear = change.getValueAdded().toString();
 					gotTitle = true;
+				} else if (change.getKey().equals("track number")) {
+					gotTrackNumber = true;
+				} else if (change.getKey().equals("length")) {
+					gotLength = true;
 				}
-				if (gotImage && gotAlbum && gotArtist && gotYear && gotGenre && gotTitle) {
+
+				System.out.println(mediaPlayer.getMedia().getMetadata());
+
+				if (gotImage && gotAlbum && gotArtist && gotYear && gotGenre && gotTitle && gotTrackNumber && gotLength) {
 					metadataExtractionComplete();
-				} else {
-					System.out.println("Waiting for: image=" + gotImage + " album=" + gotAlbum + " artist=" + gotArtist
-						+ " year=" + gotYear + " genre=" + gotGenre + " title=" + gotTitle
-					);
-					System.out.println(mediaPlayer.getMedia().getMetadata());
 				}
 			}
 		});
 	}
 
 	public void metadataExtractionComplete() {
+		done = true;
+
+		System.out.println("£ metatdata collection for file " + file.getPath() + " successful");
+
 		ObservableMap<String, Object> metaData = mediaPlayer.getMedia().getMetadata();
 
 		int fileTrackNumber = -99; //*Integer.parseInt(*/(Integer)metaData.get("track number")/*)*/;
@@ -67,10 +69,18 @@ public class SongFileImporter {
 
 		//check for new genre
 		int fileGenreId = getGenreId((String)metaData.get("genre"));
+
+		System.out.println("£ got the genreId");
+
 		//check for new artist
 		int fileArtistId = getArtistId((String)metaData.get("artist"));
+
+		System.out.println("£ got the artistId");
+
 		//check for new album
-		int fileAlbumId = getAlbumId((String)metaData.get("album"), fileArtistId, fileGenreId, fileYear);
+		int fileAlbumId = getAlbumId((String)metaData.get("album"), fileArtistId, fileGenreId, fileYear, (Image)metaData.get("image"));
+
+		System.out.println("£ got the albumId");
 
 		//add to database
 		PreparedStatement statement = Main.database.createStatement(
@@ -87,11 +97,14 @@ public class SongFileImporter {
 		}
 
 		Main.database.runUpdateStatement(statement);
+
+		System.out.println("£ done !");
+		Main.mainSceneController.updateLibraryPane();
 	}
 
 	private int getGenreId(String genreString) {
 		if (genreString.startsWith("(")) {
-			genreString = getGenreFromNumber(Integer.parseInt(genreString.substring(1, genreString.length() - 1)));
+			genreString = getGenreFromNumber(Integer.parseInt(genreString.substring(1, genreString.length() - 2)));
 		}
 		
 		PreparedStatement statement1 = Main.database.createStatement("SELECT Id FROM Genres WHERE Name = ?");
@@ -114,13 +127,22 @@ public class SongFileImporter {
 						System.out.println("- setting ? error");
 					}
 					Main.database.runUpdateStatement(statement2);
-					getGenreId(genreString);
+					
+					PreparedStatement statement3 = Main.database.createStatement("SELECT Id FROM Genres WHERE Name = ?");
+					try {
+						statement3.setString(1, genreString);
+					}  catch (SQLException ex) {
+						System.out.println("- setting ? error");
+					}
+
+					ResultSet results3 = Main.database.runSelectStatement(statement3);
+					if (results3.next()) return results3.getInt("Id");
 				}
 			} catch (SQLException resultsexception) {
 				System.out.println("- Database result processing error: " + resultsexception.getMessage());
 			}
 		}
-		return -404;
+		return -401;
 	}
 
 	private int getArtistId(String artistName) {
@@ -144,16 +166,25 @@ public class SongFileImporter {
 						System.out.println("- setting ? error");
 					}
 					Main.database.runUpdateStatement(statement2);
-					getArtistId(artistName);
+
+					PreparedStatement statement3 = Main.database.createStatement("SELECT Id FROM Artists WHERE Name = ?");
+					try {
+						statement3.setString(1, artistName);
+					}  catch (SQLException ex) {
+						System.out.println("- setting ? error");
+					}
+
+					ResultSet results3 = Main.database.runSelectStatement(statement3);
+					if (results3.next()) return results3.getInt("Id");
 				}
 			} catch (SQLException resultsexception) {
 				System.out.println("- Database result processing error: " + resultsexception.getMessage());
 			}
 		}
-		return -404;
+		return -403;
 	}
 
-	private int getAlbumId(String albumTitle, int artistId, int genreId, String albumYear) {
+	private int getAlbumId(String albumTitle, int artistId, int genreId, String albumYear, Image art) {
 
 		PreparedStatement statement1 = Main.database.createStatement("SELECT Id FROM Albums WHERE Title = ? AND ArtistId = ?");
 		try {
@@ -169,25 +200,57 @@ public class SongFileImporter {
 				if (results.next()) {
 					return results.getInt("Id");
 				} else {
-					//PreparedStatement statement2 = Main.database.createStatement("INSERT INTO Albums (ArtistId, GenreId, Title, Year) VALUES (?, ?, ?, ?)");
+
+					String imageUrl = "./resources/images/albums/" + albumTitle.replaceAll("[^a-zA-Z0-9.-]", "_") + ".png";
+					File outputFile = new File(imageUrl);
+
+					try {
+						outputFile.createNewFile();
+					} catch (IOException e) {
+						System.out.println("! album art file error: " + imageUrl + "; " + e.getMessage());
+					}
+
+					BufferedImage bi = SwingFXUtils.fromFXImage(art, null);
+					try {
+						ImageIO.write(bi, "png", outputFile);
+					} catch (IOException e) {
+						System.out.println("error writing song image to file");
+						throw new RuntimeException(e);
+					}
+
+					System.out.println(" !!! no albums found for that statemnt");
 					PreparedStatement statement2 = Main.database.createStatement(
-						"INSERT INTO Albums (ArtistId, GenreId, Title, Year) VALUES (?, ?, ?, ?)");
+						"INSERT INTO Albums (ArtistId, GenreId, Title, Year, Picture) VALUES (?, ?, ?, ?, ?)");
 					try {
 						statement2.setInt(1, artistId);
 						statement2.setInt(2, genreId);
 						statement2.setString(3, albumTitle);
 						statement2.setString(4, albumYear);
+						statement2.setString(5, imageUrl);
 					} catch (SQLException ex) {
 						System.out.println("- setting ? error");
 					}
 					Main.database.runUpdateStatement(statement2);
-					//getAlbumId(albumTitle, artistId, genreId, albumYear);
+					System.out.println(" !!! making new album with title=" + albumTitle);
+
+					PreparedStatement statement3 = Main.database.createStatement("SELECT Id FROM Albums WHERE Title = ? AND ArtistId = ?");
+					try {
+						statement3.setString(1, albumTitle);
+						statement3.setInt(2, artistId);
+					}  catch (SQLException ex) {
+						System.out.println("- setting ? error");
+					}
+					ResultSet results2 = Main.database.runSelectStatement(statement3);
+					if (results2.next()) return results2.getInt("Id");
 				}
 			} catch (SQLException resultsexception) {
 				System.out.println("- Database result processing error: " + resultsexception.getMessage());
 			}
+		} else {
+			System.out.println("¿¿¿ results was null ????");
+			return -404;
 		}
-		return -404;
+		return -405;
 	}
 
 	private String getGenreFromNumber(int fileGenreNumber) {

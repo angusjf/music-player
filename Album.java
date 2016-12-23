@@ -30,7 +30,7 @@ public class Album implements HasSongs {
 	}
 
 	public String getPicture() {
-		return picture != null ? "resources/images/albums/" + picture : "resources/images/error.png";
+		return picture != null ? picture : "resources/images/error.png";
 	}
 
 	public ArrayList<Song> getSongs() {
