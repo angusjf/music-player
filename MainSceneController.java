@@ -389,7 +389,7 @@ public class MainSceneController {
 	 * and puts them into a Tile-Pane
 	 */
 	private TilePane generateListOfPlaylists(List<Playlist> playlistsList) {
-		TilePane tilePane = new TilePane(10, 10);
+		TilePane tilePane = new TilePane(24, 24);
 		tilePane.setMinWidth(640);
 		for (Playlist p : playlistsList) tilePane.getChildren().addAll(generatePlaylistBox(p));
 		return tilePane;
@@ -401,7 +401,7 @@ public class MainSceneController {
 	 * and puts them into a Tile-Pane
 	 */
 	private TilePane generateListOfGenres(List<Genre> genresList) {
-		TilePane tilePane = new TilePane(10, 10);
+		TilePane tilePane = new TilePane(24, 24);
 		tilePane.setMinWidth(640);
 		for (Genre g : genresList) tilePane.getChildren().addAll(generateGenreBox(g));
 		return tilePane;
@@ -413,7 +413,7 @@ public class MainSceneController {
 	 * and puts them into a Tile-Pane
 	 */
 	private TilePane generateListOfArtists(List<Artist> artistsList) {
-		TilePane tilePane = new TilePane(10, 10);
+		TilePane tilePane = new TilePane(24, 24);
 		tilePane.setMinWidth(640);
 		for (Artist a : artistsList) tilePane.getChildren().addAll(generateArtistBox(a));
 		return tilePane;
@@ -477,8 +477,10 @@ public class MainSceneController {
 
 		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 			libraryPane.getChildren().setAll(
-				generateHeader2(artist.toString() + ":"),
-				generateListOfAlbums(artist.getAlbums())
+				new VBox(6,
+					generateHeader2(artist.toString() + ":"),
+					generateListOfAlbums(artist.getAlbums())
+				)
 			);
 			updateBackButtonEnabled(true);
 			event.consume();
@@ -505,8 +507,10 @@ public class MainSceneController {
 
 		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 			libraryPane.getChildren().setAll(
-				generateHeader2(genre.toString() + ":"),
-				generateListOfAlbums(genre.getAlbums())
+				new VBox(6,
+					generateHeader2(genre.toString() + ":"),
+					generateListOfAlbums(genre.getAlbums())
+				)
 			);
 			updateBackButtonEnabled(true);
 			event.consume();
@@ -641,31 +645,41 @@ public class MainSceneController {
 	private GridPane generateImage(List<Song> songs) {
 		GridPane imageGrid = new GridPane();
 
-		HashSet<String> images = new HashSet<String>();
+		HashSet<String> imagesSet = new HashSet<String>();
 		for (Song s : songs) {
-			images.add(s.getAlbum().getPicture());
+			imagesSet.add(s.getAlbum().getPicture());
 		}
+		String[] images = imagesSet.toArray(new String[imagesSet.size()]);
 
 		Color albumColor = Color.BLACK;
-		//super hacky
-		for (String s : images) {
-			Image i = new Image(s);
+		if (images.length > 0) {
+			Image i = new Image(images[0]);
 			albumColor = i.getPixelReader().getColor((int)i.getWidth()/4, (int)i.getHeight()/4);
-			break;
 		}
 		DropShadow dropShadow = new DropShadow(BlurType.THREE_PASS_BOX, albumColor, 20, 0.0, 0, 0);
 		imageGrid.setEffect(dropShadow);
 
-		if (images.size() > 4) {
+		if (images.length >= 4) {
 			for (int i = 0; i < 4; i++) {
-				ImageView im = new ImageView(images.iterator().next());
+				ImageView im = new ImageView(images[i]);
 				im.setFitHeight(64);
 				im.setFitWidth(64);
 				im.setSmooth(true);
 				imageGrid.add(im, i < 2 ? 0 : 1, i % 2);
 			}
+		} else if (images.length > 1) {
+			for (int i = 0; i < 4; i++) {
+				ImageView im = new ImageView(images[i % 2 == 0 ? 0 : 1]);
+				im.setFitHeight(64);
+				im.setFitWidth(64);
+				im.setSmooth(true);
+				int y = i < 2 ? 0 : 1;
+				int x = y > 0 ? (i % 2 == 0 ? 0 : 1) : (i % 2 == 0 ? 1 : 0);
+
+				imageGrid.add(im, x, y);
+			}
 		} else {
-			ImageView im = new ImageView(images.size() > 0 ? images.iterator().next() : "resources/images/error.png");
+			ImageView im = new ImageView(images.length > 0 ? images[0] : "resources/images/error.png");
 			im.setFitHeight(128);
 			im.setFitWidth(128);
 			im.setSmooth(true);
