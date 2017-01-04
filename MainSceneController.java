@@ -39,6 +39,7 @@ import javafx.stage.Popup;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.BlurType;
 import javafx.scene.Cursor;
+import javafx.scene.control.TextInputDialog;
 
 public class MainSceneController {
 
@@ -439,13 +440,37 @@ public class MainSceneController {
 			new Text(song.getLength())
 		);
 
+		MenuItem addToPlaylist = new MenuItem("Add '" + song.toString() + "' to a playlist...");
 
-		MenuItem remove = new MenuItem("Remove");
-		remove.setOnAction(e -> {
-			System.out.println("removing " + song);
+		addToPlaylist.setOnAction(e -> {
+			ContextMenu contextMenu = new ContextMenu();
+
+			for (Playlist playlist : Playlist.getAllFromDatabase()) {
+				MenuItem playlistItem = new MenuItem("Add '" + song.toString() + "' to '" + playlist.toString() + "'");
+				playlistItem.setOnAction(f -> playlist.addSong(song));
+				contextMenu.getItems().add(playlistItem);
+			}
+
+			MenuItem newPlaylistItem = new MenuItem("Make a new playlist...");
+			newPlaylistItem.setOnAction(f -> {
+				TextInputDialog dialog = new TextInputDialog("");
+				dialog.setTitle("New playlist");
+				dialog.setHeaderText("Create a new playlist");
+				dialog.setContentText("Enter the name for the new playlist");
+
+				dialog.showAndWait().ifPresent(input -> Playlist.createNewPlaylist(input));
+			});
+			contextMenu.getItems().add(newPlaylistItem);
+
+			contextMenu.show(hBox, 0, 0 /*TODO*/);
 		});
 
-		ContextMenu contextMenu = new ContextMenu(remove);
+		MenuItem remove = new MenuItem("Delete song '" + song.toString() + "'");
+		remove.setOnAction(e -> {
+			song.removeFromDatabase();
+		});
+
+		ContextMenu contextMenu = new ContextMenu(addToPlaylist, remove);
 
 		hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 			contextMenu.show(hBox, event.getScreenX(), event.getScreenY());

@@ -77,6 +77,20 @@ public class Playlist implements HasSongs {
 		return "<TODO>";
 	}
 
+	public void addSong(Song song) {
+		PreparedStatement statement = Main.database.createStatement(
+			"INSERT INTO SongsToPlaylists (SongId, PlaylistId) VALUES (?, ?)"
+		);
+		try {
+			statement.setInt(1, song.getId());
+			statement.setInt(2, id);
+		}  catch (SQLException ex) {
+			System.out.println("- setting ? error");
+		}
+
+		Main.database.runUpdateStatement(statement);
+	}
+
 	public static ArrayList<Playlist> getAllFromDatabase() {
 		ArrayList<Playlist> all = new ArrayList<Playlist>();
 
@@ -101,6 +115,18 @@ public class Playlist implements HasSongs {
 		}
 
 		return all;
+	}
+
+	public static void createNewPlaylist(String name) {
+		PreparedStatement statement = Main.database.createStatement("INSERT INTO Playlists (Name) VALUES (?)");
+
+		try {
+			statement.setString(1, name);
+		}  catch (SQLException ex) {
+			System.out.println("- setting ? error");
+		}
+
+		Main.database.runUpdateStatement(statement);
 	}
 
 }
