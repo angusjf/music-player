@@ -64,7 +64,7 @@ public class SongFileImporter {
 		int fileTrackNumber = -99; //*Integer.parseInt(*/(Integer)metaData.get("track number")/*)*/;
 		String fileName = (String)metaData.get("title");
 		String fileFile = (String)file.getAbsolutePath();
-		String fileLength = (String)metaData.get("length");
+		String fileLength = mediaPlayer.getMedia().getDuration().toString(); //TODO
 		String fileYear = "2345";//((Integer)metaData.get("year")).toString();
 
 		//check for new genre
@@ -99,12 +99,12 @@ public class SongFileImporter {
 		Main.database.runUpdateStatement(statement);
 
 		System.out.println("£ done !");
-		Main.mainSceneController.updateLibraryPane();
+		//Main.mainSceneController.showPopUp("Album '" +   + "' );TODO
 	}
 
 	private int getGenreId(String genreString) {
 		if (genreString.startsWith("(")) {
-			genreString = getGenreFromNumber(Integer.parseInt(genreString.substring(1, genreString.length() - 2)));
+			genreString = getGenreFromNumber(Integer.parseInt( genreString.replace("(", "").replace(")", "") ));
 		}
 		
 		PreparedStatement statement1 = Main.database.createStatement("SELECT Id FROM Genres WHERE Name = ?");

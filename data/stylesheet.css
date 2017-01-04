@@ -1,0 +1,28 @@
+/*.text {
+	-fx-background-color: white;
+	-fx-border-radius: 1;
+	-fx-border-color: #aaa;
+	-fx-border-radius: 4;
+}*/
+
+/*.button, .choice-box {
+	-fx-background-color: linear-gradient(to bottom, #ffaeaa, #ff5522);
+	-fx-background-color: #33aaff;
+	-fx-border-color: #33aaff;
+	-fx-border-radius: 8;
+	-fx-border-width: 0;
+	-fx-text-fill: white;
+}*/
+
+/*.text {
+	-fx-font-size: 23px;
+	-fx-font-family: Roboto;
+}
+
+.split-pane {
+	-fx-background-color: white;
+}
+
+.sidebar {
+	-fx-background-color: #f8f8ff;
+}*/
