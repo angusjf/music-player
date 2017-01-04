@@ -56,6 +56,27 @@ public class Playlist implements HasSongs {
 		return songs;
 	}
 
+	public int getNumberOfSongs() {
+		return getSongs().size();
+	}
+
+	public String getLength() {
+		//TODO X hours, X mins
+		/*
+		 * int lengthSeconds;
+		 * int lengthMinuites;
+		 * int lengthHours;
+		 * for (Song song : getSongs()) {
+		 *	+= song.getLength();
+		 * }
+		 * //Calc
+		 * String ret = "";
+		 * lengthHours + " hour, " + lengthMinuites + " minuites";
+		 * return ret;
+		 */
+		return "<TODO>";
+	}
+
 	public static ArrayList<Playlist> getAllFromDatabase() {
 		ArrayList<Playlist> all = new ArrayList<Playlist>();
 
