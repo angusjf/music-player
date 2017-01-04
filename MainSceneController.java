@@ -439,21 +439,16 @@ public class MainSceneController {
 			new Text(song.getLength())
 		);
 
+
+		MenuItem remove = new MenuItem("Remove");
+		remove.setOnAction(e -> {
+			System.out.println("removing " + song);
+		});
+
+		ContextMenu contextMenu = new ContextMenu(remove);
+
 		hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-
-			final ContextMenu contextMenu = new ContextMenu();
-			contextMenu.setOnShowing(e -> {
-				System.out.println("showing");
-			});
-
-			MenuItem remove = new MenuItem("Remove");
-			remove.setOnAction(e -> {
-				System.out.println("removing " + song);
-			});
-
-			contextMenu.getItems().setAll(remove);
-
-			event.consume();
+			contextMenu.show(hBox, event.getScreenX(), event.getScreenY());
 		});
 
 		return hBox;
