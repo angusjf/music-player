@@ -91,6 +91,12 @@ public class Playlist implements HasSongs {
 		Main.database.runUpdateStatement(statement);
 	}
 
+	public void removeFromDatabase() {
+		for (Song song : getSongs()) {
+			song.removeFromDatabase();
+		}
+	}
+
 	public static ArrayList<Playlist> getAllFromDatabase() {
 		ArrayList<Playlist> all = new ArrayList<Playlist>();
 

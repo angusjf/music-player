@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 
 public class Main extends Application {
 
-	static final String DATABASE_FILE = "data/database.db";
+	static final String DATABASE_FILE = "user/database.db";
 	final String FXML_SCENE_FILE = "data/MainScene.fxml";
 
 	public static DatabaseController database;

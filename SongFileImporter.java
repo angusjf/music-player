@@ -201,7 +201,7 @@ public class SongFileImporter {
 					return results.getInt("Id");
 				} else {
 
-					String imageUrl = "./resources/images/albums/" + albumTitle.replaceAll("[^a-zA-Z0-9.-]", "_") + ".png";
+					String imageUrl = "user/albums/" + albumTitle.replaceAll("[^a-zA-Z0-9.-]", "_") + ".png";
 					File outputFile = new File(imageUrl);
 
 					try {

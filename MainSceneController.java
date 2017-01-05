@@ -40,6 +40,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.BlurType;
 import javafx.scene.Cursor;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ChoiceDialog;
+import java.util.Optional;
 
 public class MainSceneController {
 
@@ -71,7 +73,7 @@ public class MainSceneController {
 		stage.setTitle(SCENE_TITLE);
 		stage.setMinHeight(MIN_WIDTH);
 		stage.setMinWidth(MIN_HEIGHT);
-		stage.getIcons().add(new Image("file:resources/logo.png"));
+		stage.getIcons().add(new Image("file:data/logo.png"));
 		scene.getStylesheets().add("data/stylesheet.css");
 		stage.show();
 
@@ -184,7 +186,17 @@ public class MainSceneController {
 				libraryPane.getChildren().setAll(generateListOfGenres(Genre.getAllFromDatabase()));
 				break;
 			case "Playlists":
-				libraryPane.getChildren().setAll(generateListOfPlaylists(Playlist.getAllFromDatabase()));
+				Button newPlaylist = new Button("Create a new playlist");
+				newPlaylist.setOnAction(f -> {
+					TextInputDialog dialog = new TextInputDialog("");
+					dialog.setTitle("New playlist");
+					dialog.setHeaderText("Create a new playlist");
+					dialog.setContentText("Enter the name for the new playlist");
+
+					dialog.showAndWait().ifPresent(input -> Playlist.createNewPlaylist(input));
+				});
+
+				libraryPane.getChildren().setAll(newPlaylist, generateListOfPlaylists(Playlist.getAllFromDatabase()));
 				break;
 			default:
 				System.out.println("- unknown viewsChoiceBox item");
@@ -440,29 +452,36 @@ public class MainSceneController {
 			new Text(song.getLength())
 		);
 
+		MenuItem playNow = new MenuItem("Play now");
+		playNow.setOnAction(e -> Main.musicController.skipCurrentSongAndPlay(song));
+		MenuItem playNext = new MenuItem("Play next");
+		playNext.setOnAction(e -> Main.musicController.addToQueueNext(song));
+		MenuItem addToQueueEnd = new MenuItem("Add to queue end");
+		addToQueueEnd.setOnAction(e -> Main.musicController.addToQueueEnd(song));
+		MenuItem addToQueueNext = new MenuItem("Add to queue next");
+		addToQueueNext.setOnAction(e -> Main.musicController.addToQueueNext(song));
+
 		MenuItem addToPlaylist = new MenuItem("Add '" + song.toString() + "' to a playlist...");
-
 		addToPlaylist.setOnAction(e -> {
-			ContextMenu contextMenu = new ContextMenu();
+			List<Playlist> all = Playlist.getAllFromDatabase();
+			ChoiceDialog<Playlist> choosePlaylistDialog = new ChoiceDialog<Playlist>(all.get(0), all);
+			choosePlaylistDialog.setTitle("Select Playlist");
+			choosePlaylistDialog.setHeaderText("Choose a Playlist to add '" + song.toString() + "' to:");
 
-			for (Playlist playlist : Playlist.getAllFromDatabase()) {
-				MenuItem playlistItem = new MenuItem("Add '" + song.toString() + "' to '" + playlist.toString() + "'");
-				playlistItem.setOnAction(f -> playlist.addSong(song));
-				contextMenu.getItems().add(playlistItem);
+			Optional<Playlist> playlistChosen = choosePlaylistDialog.showAndWait();
+			if (playlistChosen.isPresent()) {
+				playlistChosen.get().addSong(song);
 			}
+		});
 
-			MenuItem newPlaylistItem = new MenuItem("Make a new playlist...");
-			newPlaylistItem.setOnAction(f -> {
-				TextInputDialog dialog = new TextInputDialog("");
-				dialog.setTitle("New playlist");
-				dialog.setHeaderText("Create a new playlist");
-				dialog.setContentText("Enter the name for the new playlist");
+		MenuItem goToArtist = new MenuItem("Go to artist '" + song.getArtist() + "'");
+		goToArtist.setOnAction(e -> {
+			libraryPane.getChildren().setAll(generateArtistBox(song.getArtist()));
+		});
 
-				dialog.showAndWait().ifPresent(input -> Playlist.createNewPlaylist(input));
-			});
-			contextMenu.getItems().add(newPlaylistItem);
-
-			contextMenu.show(hBox, 0, 0 /*TODO*/);
+		MenuItem goToAlbum = new MenuItem("Go to album '" + song.getAlbum() + "'");
+		goToAlbum.setOnAction(e -> {
+			libraryPane.getChildren().setAll(generateAlbumView(song.getAlbum()));
 		});
 
 		MenuItem remove = new MenuItem("Delete song '" + song.toString() + "'");
@@ -470,7 +489,7 @@ public class MainSceneController {
 			song.removeFromDatabase();
 		});
 
-		ContextMenu contextMenu = new ContextMenu(addToPlaylist, remove);
+		ContextMenu contextMenu = new ContextMenu(playNow, playNext, addToQueueNext, addToQueueEnd, addToPlaylist, goToArtist, goToAlbum, remove);
 
 		hBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
 			contextMenu.show(hBox, event.getScreenX(), event.getScreenY());
@@ -569,6 +588,8 @@ public class MainSceneController {
 		playAll.setOnAction(a -> Main.musicController.skipCurrentSongAndPlay(playlist));
 		Button addAll = new Button("Add all from " + playlist.toString() + " to queue");
 		addAll.setOnAction(a -> Main.musicController.addToQueueEnd(playlist));
+		Button delete = new Button("Delete playlist");
+		delete.setOnAction(a -> playlist.removeFromDatabase());
 
 		return new VBox(6,
 			new HBox(6,
@@ -578,7 +599,8 @@ public class MainSceneController {
 					generateHeader2(playlist.toString()),
 					generateHeader3(playlist.getNumberOfSongs() + " songs, " + playlist.getLength()),
 					playAll,
-					addAll
+					addAll,
+					delete
 				)
 			),
 			generateListOfSongs(playlist.getSongs()) //list of songs
@@ -631,6 +653,9 @@ public class MainSceneController {
 		);
 	}
 
+	/**
+	 * Text style generators.
+	 */
 	private Text generateHeader1(String s) {
 		Text text = new Text(s.toUpperCase());
 		text.setFont(new Font(11));
@@ -699,7 +724,7 @@ public class MainSceneController {
 				imageGrid.add(im, x, y);
 			}
 		} else {
-			ImageView im = new ImageView(images.length > 0 ? images[0] : "resources/images/error.png");
+			ImageView im = new ImageView(images.length > 0 ? images[0] : "data/error.png");
 			im.setFitHeight(128);
 			im.setFitWidth(128);
 			im.setSmooth(true);

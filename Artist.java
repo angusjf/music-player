@@ -24,7 +24,7 @@ public class Artist implements HasAlbums {
 	}
 
 	public String getPicture() {
-		return picture != null ? "resources/images/artists/" + picture : "resources/images/error.png";
+		return picture != null ? "user/artists/" + picture : "data/error.png";
 	}
 
 	public ArrayList<Album> getAlbums() {
