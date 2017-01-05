@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
+import java.io.File;
 
 public class Main extends Application {
 
@@ -14,7 +15,17 @@ public class Main extends Application {
 	public static VisualiserSceneController visualiserSceneController;
 
 	public static void main(String[] args) {
-		database = new DatabaseController(DATABASE_FILE);
+		database = new DatabaseController();
+
+		//check required files exist
+		new File("user/").mkdir();
+		new File("user/albums/").mkdir();
+		new File("user/artists/").mkdir();
+
+		File databaseFile = new File(DATABASE_FILE);
+		if (!databaseFile.exists()) database.createDatabase(DATABASE_FILE);
+		
+		database.connect(DATABASE_FILE);
 		musicController = new MusicController();
 		launch(args);
 	}
