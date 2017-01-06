@@ -115,7 +115,7 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
         System.out.println("% > set visualiser to show 1/" + divider + " of the spectrum, with");
 	*/
 	Point.lerpAmount -= 0.1;
-        System.out.println("% > set visualiser to lerp " + divider);
+        System.out.println("% > set visualiser to lerp " + Point.lerpAmount);
     }
 
     public void rightKey() {
@@ -130,7 +130,7 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
         }
 	*/
 	Point.lerpAmount += 0.1;
-        System.out.println("% > set visualiser to lerp " + divider);
+        System.out.println("% > set visualiser to lerp " + Point.lerpAmount);
     }
 
     public void upKey() {

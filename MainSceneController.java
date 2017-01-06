@@ -172,18 +172,20 @@ public class MainSceneController {
 		updateBackButtonEnabled(false);
 		searchBox.clear();
 
+		libraryPane.getChildren().setAll(generateHeader1("All " + viewString));
+
 		switch (viewString) {
 			case "Albums":
-				libraryPane.getChildren().setAll(generateListOfAlbums(Album.getAllFromDatabase()));
+				libraryPane.getChildren().addAll(generateListOfAlbums(Album.getAllFromDatabase()));
 				break;
 			case "Songs":
-				libraryPane.getChildren().setAll(generateListOfSongs(Song.getAllFromDatabase()));
+				libraryPane.getChildren().addAll(generateListOfSongs(Song.getAllFromDatabase()));
 				break;
 			case "Artists":
-				libraryPane.getChildren().setAll(generateListOfArtists(Artist.getAllFromDatabase()));
+				libraryPane.getChildren().addAll(generateListOfArtists(Artist.getAllFromDatabase()));
 				break;
 			case "Genres":
-				libraryPane.getChildren().setAll(generateListOfGenres(Genre.getAllFromDatabase()));
+				libraryPane.getChildren().addAll(generateListOfGenres(Genre.getAllFromDatabase()));
 				break;
 			case "Playlists":
 				Button newPlaylist = new Button("Create a new playlist");
@@ -196,7 +198,7 @@ public class MainSceneController {
 					dialog.showAndWait().ifPresent(input -> Playlist.createNewPlaylist(input));
 				});
 
-				libraryPane.getChildren().setAll(newPlaylist, generateListOfPlaylists(Playlist.getAllFromDatabase()));
+				libraryPane.getChildren().addAll(newPlaylist, generateListOfPlaylists(Playlist.getAllFromDatabase()));
 				break;
 			default:
 				System.out.println("- unknown viewsChoiceBox item");
@@ -267,12 +269,12 @@ public class MainSceneController {
 		String query = searchBox.getText();
 		if (query.equals("")) return;
 		updateBackButtonEnabled(true);
-		VBox searchResults = new VBox();
+		VBox searchResults = new VBox(8);
 		libraryPane.getChildren().setAll(searchResults);
 
 		{
 			//Song
-			VBox box = new VBox();
+			VBox box = new VBox(3);
 			boolean foundAResult = false;
 
 			for (Song s : Song.getAllFromDatabase()) {
@@ -476,7 +478,7 @@ public class MainSceneController {
 
 		MenuItem goToArtist = new MenuItem("Go to artist '" + song.getArtist() + "'");
 		goToArtist.setOnAction(e -> {
-			libraryPane.getChildren().setAll(generateArtistBox(song.getArtist()));
+			libraryPane.getChildren().setAll(generateArtistView(song.getArtist()));
 		});
 
 		MenuItem goToAlbum = new MenuItem("Go to album '" + song.getAlbum() + "'");
@@ -515,17 +517,20 @@ public class MainSceneController {
 		);
 
 		vBox.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-			libraryPane.getChildren().setAll(
-				new VBox(6,
-					generateHeader2(artist.toString() + ":"),
-					generateListOfAlbums(artist.getAlbums())
-				)
-			);
+			libraryPane.getChildren().setAll(generateArtistView(artist));
 			updateBackButtonEnabled(true);
 			event.consume();
 		});
 		
 		return vBox;
+	}
+
+	private VBox generateArtistView(Artist artist) {
+		return new VBox(6,
+			generateHeader1("Artist"),
+			generateHeader2(artist.toString() + ":"),
+			generateListOfAlbums(artist.getAlbums())
+		);
 	}
 
 	/**

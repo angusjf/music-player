@@ -56,8 +56,8 @@ class MusicController {
 		queue.add(song);
 		Main.mainSceneController.updateSongQueueContents();
 		Main.mainSceneController.updatePlayButtonEnabled(true);
-        Main.mainSceneController.updateSongText();
-        Main.mainSceneController.updateClearQueueButtonEnabled(true);
+		Main.mainSceneController.updateSongText();
+		if (queue.size() > 1) Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
 	public void addToQueueEnd(HasSongs hasSongs) {
@@ -73,7 +73,7 @@ class MusicController {
 		Main.mainSceneController.updateSongQueueContents();
 		Main.mainSceneController.updatePlayButtonEnabled(true);
 		Main.mainSceneController.updateSongText();
-		Main.mainSceneController.updateClearQueueButtonEnabled(true);
+		if (queue.size() > 1) Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
 	public void addToQueueNext(HasSongs hasSongs) {
@@ -85,7 +85,7 @@ class MusicController {
 		Main.mainSceneController.updateSongQueueContents();
 		Main.mainSceneController.updatePlayButtonEnabled(true);
 		Main.mainSceneController.updateSongText();
-		Main.mainSceneController.updateClearQueueButtonEnabled(true);
+		if (queue.size() > 1) Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
 	public void skipCurrentSongAndPlay(Song song) {
@@ -119,7 +119,7 @@ class MusicController {
 			queue.remove(0);
 			Main.mainSceneController.updatePlayButtonEnabled(false);
 			Main.mainSceneController.updateSongQueueContents();
-            Main.mainSceneController.updateSongText();
+            		Main.mainSceneController.updateSongText();
 		}
 
 		if (queue.size() > 0) { //checks there is a next song to play TODO
@@ -143,7 +143,7 @@ class MusicController {
 			queue.add(temp);
 		}
 		Main.mainSceneController.updateSongQueueContents();
-		Main.mainSceneController.updateClearQueueButtonEnabled(false);
+		if (queue.size() > 1) Main.mainSceneController.updateClearQueueButtonEnabled(true);
 	}
 
 	//PAUSE / PLAY
@@ -226,12 +226,12 @@ class MusicController {
 		if (mediaPlayer != null) mediaPlayer.stop();
 		mediaPlayer = new MediaPlayer(media);
 		mediaPlayer.setOnEndOfMedia(() -> onSongEnd());
-		//mediaPlayer.setAudioSpectrumListener(asl);
-		//mediaPlayer.setAudioSpectrumInterval(sampleInterval);
-		//mediaPlayer.setAudioSpectrumNumBands(numberOfBands);
+		mediaPlayer.setAudioSpectrumListener(asl);
+		mediaPlayer.setAudioSpectrumInterval(sampleInterval);
+		mediaPlayer.setAudioSpectrumNumBands(numberOfBands);
 		setPaused(false);
 
-        Main.mainSceneController.updateVisualiseButtonEnabled(true);
+        	Main.mainSceneController.updateVisualiseButtonEnabled(true);
 	}
 
 	private void setSong() {
