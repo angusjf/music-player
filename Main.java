@@ -7,25 +7,32 @@ import java.io.File;
 public class Main extends Application {
 
 	static final String DATABASE_FILE = "user/database.db";
-	final String FXML_SCENE_FILE = "data/MainScene.fxml";
+	static final String FXML_SCENE_FILE = "data/MainScene.fxml";
 
 	public static DatabaseController database;
-	public static MusicController musicController; //should this be static?
+	public static MusicController musicController;
 	public static MainSceneController mainSceneController;
 	public static VisualiserSceneController visualiserSceneController;
 
 	public static void main(String[] args) {
-		database = new DatabaseController();
-
 		//check required files exist
 		new File("user/").mkdir();
 		new File("user/albums/").mkdir();
 		new File("user/artists/").mkdir();
-
-		File databaseFile = new File(DATABASE_FILE);
-		if (!databaseFile.exists()) database.createDatabase(DATABASE_FILE);
 		
-		database.connect(DATABASE_FILE);
+		File databaseFile = new File(DATABASE_FILE);
+		if (databaseFile.exists()) {
+			database = new DatabaseController(DATABASE_FILE);
+		} else {
+			try {
+				databaseFile.createNewFile();
+			} catch (java.io.IOException ex) {
+				System.out.println("- error creating database.db: " + ex);
+			}
+			database = new DatabaseController(DATABASE_FILE);
+			database.createDatabase(DATABASE_FILE);
+		}
+		
 		musicController = new MusicController();
 		launch(args);
 	}

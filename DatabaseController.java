@@ -4,12 +4,30 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 class DatabaseController {
 
 	public Connection connection;
+	public static final String[] tableStatements = {
+		"PRAGMA foreign_keys = off;",
+		"BEGIN TRANSACTION;",
+		"CREATE TABLE Songs (Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, AlbumId INTEGER REFERENCES Albums (Id), TrackNumber INTEGER, Name VARCHAR, File VARCHAR, Length VARCHAR);",
+		"CREATE TABLE Playlists (Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Name VARCHAR);",
+		"CREATE TABLE SongsToPlaylists (SongId INTEGER REFERENCES Songs (Id), PlaylistId INTEGER REFERENCES Playlists (Id));",
+		"CREATE TABLE Genres (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name VARCHAR);",
+		"CREATE TABLE Artists (Id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL, Name VARCHAR, Picture VARCHAR);",
+		"CREATE TABLE Albums (Id INTEGER NOT NULL UNIQUE PRIMARY KEY AUTOINCREMENT, ArtistId INTEGER REFERENCES Artists (Id), GenreId INTEGER REFERENCES Genres (Id), Title VARCHAR, Year VARCHAR, Picture VARCHAR);",
+		"CREATE TABLE ArtistsFeaturedInSongs (ArtistId INTEGER REFERENCES Artists (Id), SongId INTEGER REFERENCES Songs (Id));",
+		"COMMIT TRANSACTION;",
+		"PRAGMA foreign_keys = on;"
+	};
 
-	public DatabaseController() { }
+	public DatabaseController(String file) {
+		connect(file);
+	}
 
 	public void connect(String databaseFile) {
 		try {
@@ -32,105 +50,10 @@ class DatabaseController {
 		}
 	}
 
-	public void createDatabase(String databaseFile) { // got from the net TODO
-		/*
-		PRAGMA foreign_keys = off;
-		BEGIN TRANSACTION;
-
-		-- Table: Songs
-		CREATE TABLE Songs (
-		    Id          INTEGER PRIMARY KEY AUTOINCREMENT
-		                        UNIQUE
-		                        NOT NULL,
-		    AlbumId     INTEGER REFERENCES Albums (Id),
-		    TrackNumber INTEGER,
-		    Name        VARCHAR,
-		    File        VARCHAR,
-		    Length      VARCHAR
-		);
-
-
-		-- Table: Playlists
-		CREATE TABLE Playlists (
-		    Id   INTEGER PRIMARY KEY AUTOINCREMENT
-		                 UNIQUE
-		                 NOT NULL,
-		    Name VARCHAR
-		);
-
-
-		-- Table: SongsToPlaylists
-		CREATE TABLE SongsToPlaylists (
-		    SongId     INTEGER REFERENCES Songs (Id),
-		    PlaylistId INTEGER REFERENCES Playlists (Id)
-		);
-
-
-		-- Table: Genres
-		CREATE TABLE Genres (
-		    Id   INTEGER PRIMARY KEY AUTOINCREMENT,
-		    Name VARCHAR
-		);
-
-
-		-- Table: Artists
-		CREATE TABLE Artists (
-		    Id      INTEGER PRIMARY KEY AUTOINCREMENT
-		                    UNIQUE
-		                    NOT NULL,
-		    Name    VARCHAR,
-		    Picture VARCHAR
-		);
-
-
-		-- Table: Albums
-		CREATE TABLE Albums (
-		    Id       INTEGER NOT NULL
-		                     UNIQUE
-		                     PRIMARY KEY AUTOINCREMENT,
-		    ArtistId INTEGER REFERENCES Artists (Id),
-		    GenreId  INTEGER REFERENCES Genres (Id),
-		    Title    VARCHAR,
-		    Year     VARCHAR,
-		    Picture  VARCHAR
-		);
-
-
-		-- Table: ArtistsFeaturedInSongs
-		CREATE TABLE ArtistsFeaturedInSongs (
-		    ArtistId INTEGER REFERENCES Artists (Id),
-		    SongId   INTEGER REFERENCES Songs (Id)
-		);
-
-
-		COMMIT TRANSACTION;
-		PRAGMA foreign_keys = on;
-		*/
-		// JDBC driver name and database URL
-		Connection connection = null;
-		Statement statement = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile);
-			statement = connection.createStatement();
-			String sql = "CREATE DATABASE STUDENTS";
-			stmt.executeUpdate(sql);
-			System.out.println("Database created successfully...");
-		} catch(SQLException se) {
-			se.printStackTrace();
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (stmt != null) stmt.close();
-			} catch(SQLException se2) {
-				// nothing we can do
-			}
-			try {
-				if (conn != null) conn.close();
-			} catch(SQLException se) {
-				se.printStackTrace();
-			}
+	public void createDatabase(String databaseFile) {
+		for (String statementString : tableStatements) {
+			PreparedStatement ps = createStatement(statementString);
+			runUpdateStatement(ps);
 		}
 	}
 
@@ -155,7 +78,7 @@ class DatabaseController {
 		}
 	}
 
-	//TODO just for compatibility
+	//just for compatibility
 	public ResultSet getResultOfQuery(String query) { return runSelectStatement(createStatement(query)); }
 
 	public void runUpdateStatement(PreparedStatement statement) {
