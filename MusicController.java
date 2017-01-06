@@ -54,10 +54,7 @@ class MusicController {
 
 	public void addToQueueEnd(Song song) {
 		queue.add(song);
-		Main.mainSceneController.updateSongQueueContents();
-		Main.mainSceneController.updatePlayButtonEnabled(true);
-		Main.mainSceneController.updateSongText();
-		if (queue.size() > 1) Main.mainSceneController.updateClearQueueButtonEnabled(true);
+		Main.mainSceneController.updateQueueArea();
 	}
 
 	public void addToQueueEnd(HasSongs hasSongs) {
@@ -70,10 +67,7 @@ class MusicController {
 		} else {
 			queue.add(1, song);
 		}
-		Main.mainSceneController.updateSongQueueContents();
-		Main.mainSceneController.updatePlayButtonEnabled(true);
-		Main.mainSceneController.updateSongText();
-		if (queue.size() > 1) Main.mainSceneController.updateClearQueueButtonEnabled(true);
+		Main.mainSceneController.updateQueueArea();
 	}
 
 	public void addToQueueNext(HasSongs hasSongs) {
@@ -82,10 +76,7 @@ class MusicController {
 		} else {
 			queue.addAll(1, hasSongs.getSongs());
 		}
-		Main.mainSceneController.updateSongQueueContents();
-		Main.mainSceneController.updatePlayButtonEnabled(true);
-		Main.mainSceneController.updateSongText();
-		if (queue.size() > 1) Main.mainSceneController.updateClearQueueButtonEnabled(true);
+		Main.mainSceneController.updateQueueArea();
 	}
 
 	public void skipCurrentSongAndPlay(Song song) {
@@ -117,9 +108,7 @@ class MusicController {
 	public void nextSong() {
 		if (queue.size() > 0) {
 			queue.remove(0);
-			Main.mainSceneController.updatePlayButtonEnabled(false);
-			Main.mainSceneController.updateSongQueueContents();
-            		Main.mainSceneController.updateSongText();
+			Main.mainSceneController.updateQueueArea();
 		}
 
 		if (queue.size() > 0) { //checks there is a next song to play TODO
@@ -142,8 +131,7 @@ class MusicController {
 			queue.clear();
 			queue.add(temp);
 		}
-		Main.mainSceneController.updateSongQueueContents();
-		if (queue.size() > 1) Main.mainSceneController.updateClearQueueButtonEnabled(true);
+		Main.mainSceneController.updateQueueArea();
 	}
 
 	//PAUSE / PLAY
@@ -155,7 +143,7 @@ class MusicController {
 	public void setPaused(boolean p) {
 		paused = p;
 		if (paused) pause(); else play();
-		Main.mainSceneController.updateCurrentSongPausedButton();
+		Main.mainSceneController.updateQueueArea();
 	}
 
 	//PLAY MODE / SHUFFLE
@@ -231,7 +219,7 @@ class MusicController {
 		mediaPlayer.setAudioSpectrumNumBands(numberOfBands);
 		setPaused(false);
 
-        	Main.mainSceneController.updateVisualiseButtonEnabled(true);
+        	Main.mainSceneController.updateQueueArea();
 	}
 
 	private void setSong() {

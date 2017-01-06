@@ -113,8 +113,7 @@ public class MainSceneController {
 			}
 		});
 		viewsChoiceBox.getSelectionModel().selectFirst();
-
-		updateSongText();
+		updateQueueArea();
 	}
 
 	public void showPopup(String message) {
@@ -131,41 +130,6 @@ public class MainSceneController {
 	||                                      ||
 	||                                      ||
 	========================================*/
-
-	public void updateSongText() {
-		Song song = Main.musicController.getCurrentSong();
-		if (song == null) {
-			songNameText.setText("");
-			artistNameText.setText("");
-			featuresNamesText.setText("");
-			albumNameText.setText("");
-		} else {
-			songNameText.setText(song.toString() + " - ");
-			artistNameText.setText(song.getArtist().toString() + " - ");
-			featuresNamesText.setText(song.getFeatures().size() != 0 ? String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList()) + " - ") : "");
-			albumNameText.setText(song.getAlbum().toString());
-			songLengthText.setText(song.getLength());
-		}
-	}
-
-	public void updateTimeElapsed() {
-		if (Main.musicController.getCurrentSong() != null)
-			timeElapsedtext.setText(Main.musicController.getTimeElapsed());
-		else
-			timeElapsedtext.setText("");
-	}
-
-	public void updateSongQueueContents() {
-		List<Song> queue = Main.musicController.getQueue();
-		if (Main.musicController.getQueue().size() > 0) {
-			queue = queue.subList(1, Main.musicController.getQueue().size());
-			VBox vBox = new VBox(2);
-			queuePane.getChildren().setAll(vBox);
-			for (Song song : queue) {
-				vBox.getChildren().addAll(generateSongBox(song)); //TODO make a more specific method
-			}
-		}
-	}
 
 	public void updateLibraryPane() {
 		String viewString = viewsChoiceBox.getSelectionModel().getSelectedItem().toString();
@@ -206,32 +170,64 @@ public class MainSceneController {
 		}
 	}
 
-	public void updateCurrentSongPausedButton() {
+	public void updateQueueArea() {
+		//updateSongText
+		Song song = Main.musicController.getCurrentSong();
+		if (song == null) {
+			songNameText.setText("");
+			artistNameText.setText("");
+			featuresNamesText.setText("");
+			albumNameText.setText("");
+		} else {
+			songNameText.setText(song.toString() + " - ");
+			artistNameText.setText(song.getArtist().toString() + " - ");
+			featuresNamesText.setText(song.getFeatures().size() != 0 ? String.join(", ", song.getFeatures().stream().map((artist) -> artist.toString()).collect(Collectors.toList()) + " - ") : "");
+			albumNameText.setText(song.getAlbum().toString());
+			songLengthText.setText(song.getLength());
+		}
+
+		timeElapsedtext.setText("0:00");
+
+		//updateSongQueueContents
+		List<Song> queue = Main.musicController.getQueue();
+		if (Main.musicController.getQueue().size() > 0) {
+			queue = queue.subList(1, Main.musicController.getQueue().size());
+			VBox vBox = new VBox(2);
+			queuePane.getChildren().setAll(vBox);
+			for (Song songFromQueue : queue) {
+				vBox.getChildren().addAll(generateSongBox(songFromQueue)); //TODO make a more specific method
+			}
+		}
+
+		//updateCurrentSongPausedButton
 		currentSongPauseButton.setText(Main.musicController.isPaused() ? ">" : "||");
+
+		//updatePlayButtonEnabled
+		currentSongPauseButton.setDisable(Main.musicController.getQueue().size() < 1);
+
+		//updateSkipButtonEnabled
+		currentSongSkipButton.setDisable(Main.musicController.getQueue().size() <= 1);
+
+		//updateVisualiseButtonEnabled
+		visualiseButton.setDisable(Main.musicController.getQueue().size() < 1);
+
+		//updateClearQueueButtonEnabled
+		clearQueueButton.setDisable(Main.musicController.getQueue().size() <= 1);
 	}
 
-	public void updateBackButtonEnabled(boolean enabled) {
-		backButton.setDisable(!enabled);
-	}
-
-	public void updatePlayButtonEnabled(boolean enabled) {
-		currentSongPauseButton.setDisable(!enabled);
-	}
-
-	public void updateSkipButtonEnabled(boolean enabled) {
-		currentSongSkipButton.setDisable(!enabled);
-	}
-
-	public void updateVisualiseButtonEnabled(boolean enabled) {
-		visualiseButton.setDisable(!enabled);
-	}
-
-	public void updateClearQueueButtonEnabled(boolean enabled) {
-		clearQueueButton.setDisable(!enabled);
+	public void updateTimeElapsed() {
+		if (Main.musicController.getCurrentSong() != null)
+			timeElapsedtext.setText(Main.musicController.getTimeElapsed());
+		else
+			timeElapsedtext.setText("");
 	}
 
 	public void updatePlayModeButtonText(String text) {
 		playModeButton.setText(text);
+	}
+
+	public void updateBackButtonEnabled(boolean enabled) {
+		backButton.setDisable(!enabled);
 	}
 
 	/*========================================
