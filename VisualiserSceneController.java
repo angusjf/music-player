@@ -14,7 +14,7 @@ class VisualiserSceneController {
 	VisualiserStyle visualiser;
 
 	static int
-	SCALE = 1,
+	SCALE = 2,
 	WIDTH = 640 * SCALE,
 	HEIGHT = 480 * SCALE;
 
@@ -50,15 +50,14 @@ class VisualiserSceneController {
 	}
 
 	public void show() {
-		//VisualiserStyle[] //TODO
-		visualiser = new BarVisualiserStyle(gc);
+		//visualiser = new BarVisualiserStyle(gc);
+		visualiser = new ShapeVisualiserStyle(gc);
 		stage.show();
 		stage.toFront();
 	}
 
 	public void hide() {
-		//stage.close();
-		visualiser = new ShapeVisualiserStyle(gc);
+		stage.close();
 	}
 
 	private void draw() {

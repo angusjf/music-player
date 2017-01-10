@@ -104,7 +104,7 @@ public class SongFileImporter {
 
 	private int getGenreId(String genreString) {
 		if (genreString.startsWith("(")) {
-			genreString = getGenreFromNumber(Integer.parseInt( genreString.replace("(", "").replace(")", "") ));
+			genreString = getGenreFromNumber(Integer.parseInt( genreString.replace("(", "").replace(")", "").trim() ));
 		}
 		
 		PreparedStatement statement1 = Main.database.createStatement("SELECT Id FROM Genres WHERE Name = ?");

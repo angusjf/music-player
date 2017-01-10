@@ -37,7 +37,7 @@ class MusicController {
 	private AngusListener asl;
 
 	public static final double sampleInterval = (double)1/30;
-	public static final int numberOfBands = 512;
+	public static final int numberOfBands = 256;
 
 	public MusicController () {
 		// TODO setCurrentMode(PlayMode.REPEAT);
