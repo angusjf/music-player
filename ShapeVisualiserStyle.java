@@ -15,7 +15,7 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
 
 	final int bandsUsed = Main.musicController.numberOfBands / 4;
 
-	final double lerpAmount = 0.25;
+	double lerpAmount = 0.30;
 
 	//2d array for x and y
 	double[][] points = new double[2][bandsUsed * 2];
@@ -44,13 +44,10 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
 		gc.fillPolygon(points[0], points[1], points[0].length);
 
 		/*
-		//temp point draw
-		for (int i = 0; i < points[0].length; i++) {
+		for (int i = 0; i < points[0].length; i++) { //temp point draw
 			gc.setFill(Color.hsb((double)i / points[0].length * 360, 1, 1));
 			gc.fillRect(points[0][i], points[1][i], 2, 2);
-
-		}
-		*/
+		} */
 	}
 
 	public double getXPosFromFreq(int f) {
@@ -69,9 +66,15 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
 
 	public void rightKey() { }
 
-	public void upKey() { }
+	public void upKey() {
+		lerpAmount += 0.05;
+		System.out.println("changed lerp amount to " + lerpAmount);
+	}
 
-	public void downKey() { }
+	public void downKey() {
+		lerpAmount -= 0.05;
+		System.out.println("changed lerp amount to " + lerpAmount);
+	}
 
 	public String toString() { return "Shape"; }
 
