@@ -14,7 +14,7 @@ class VisualiserSceneController {
 	VisualiserStyle visualiser;
 
 	static int
-	SCALE = 2,
+	SCALE = 1,
 	WIDTH = 640 * SCALE,
 	HEIGHT = 480 * SCALE;
 
@@ -39,7 +39,7 @@ class VisualiserSceneController {
 			else if (k.getCode() == KeyCode.DOWN) visualiser.downKey();
 			else if (k.getCode() == KeyCode.SPACE) Main.musicController.togglePaused();
 		});
-		//stage.setResizable(false); TODO
+		
 		show();
 
 		new AnimationTimer() {
@@ -50,7 +50,6 @@ class VisualiserSceneController {
 	}
 
 	public void show() {
-		//visualiser = new BarVisualiserStyle(gc);
 		visualiser = new ShapeVisualiserStyle(gc);
 		stage.show();
 		stage.toFront();

@@ -1,11 +1,12 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+/*TODO*/ import java.util.Arrays;
 
 public class ShapeVisualiserStyle implements VisualiserStyle {
 
 	GraphicsContext gc;
 
-	final Color fillColor = Color.hsb(0, 0, 0.9);
+	final Color fillColor = Color.hsb(0, 0, 0.95);
 
 	final int
 		maxRadius = Math.min(VisualiserSceneController.HEIGHT, VisualiserSceneController.WIDTH) / 2,
@@ -25,29 +26,42 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
 	}
 
 	public void draw() {
-		gc.setFill(fillColor);
-
-		//right half
+		//create right half
 		for (int f = 0; f < bandsUsed; f++) {
 			points[0][f] = Maths.lerp(points[0][f], getXPosFromFreq(f), lerpAmount);
 			points[1][f] = Maths.lerp(points[1][f], getYPosFromFreq(f), lerpAmount);
 		}
 
-		//left half
-		int toCopy = bandsUsed - 1;
+		//create left half
 		for (int i = bandsUsed; i < points[0].length; i++) {
-			points[0][i] = -points[0][toCopy] + VisualiserSceneController.WIDTH;
-			points[1][i] = +points[1][toCopy];
-			toCopy--;
+			points[0][i] = -points[0][points[0].length - 1 - i] + VisualiserSceneController.WIDTH;
+			points[1][i] = +points[1][points[0].length - 1 - i];
 		}
 
+		//draw a load of times for color effect
+		final int
+			xOffset = VisualiserSceneController.SCALE*4*
+			(int)(points[1][0]-320*VisualiserSceneController.SCALE)/(100*VisualiserSceneController.SCALE),
+			yOffset = VisualiserSceneController.SCALE*7*
+			(int)(points[1][0]-320*VisualiserSceneController.SCALE)/(100*VisualiserSceneController.SCALE);
+
+		gc.setGlobalBlendMode(javafx.scene.effect.BlendMode.ADD);
+
+		gc.translate(0, -yOffset);
+		gc.setFill(Color.rgb(255,0,0));
 		gc.fillPolygon(points[0], points[1], points[0].length);
 
-		/*
-		for (int i = 0; i < points[0].length; i++) { //temp point draw
-			gc.setFill(Color.hsb((double)i / points[0].length * 360, 1, 1));
-			gc.fillRect(points[0][i], points[1][i], 2, 2);
-		} */
+		gc.translate(-xOffset, yOffset);
+		gc.setFill(Color.rgb(0,255,0));
+		gc.fillPolygon(points[0], points[1], points[0].length);
+
+		gc.translate(xOffset*2, 0);
+		gc.setFill(Color.rgb(0,0,255));
+		gc.fillPolygon(points[0], points[1], points[0].length);
+
+		gc.translate(-xOffset, 0);
+
+		gc.setGlobalBlendMode(javafx.scene.effect.BlendMode.SRC_OVER);
 	}
 
 	public double getXPosFromFreq(int f) {

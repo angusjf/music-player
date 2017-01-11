@@ -37,7 +37,7 @@ class MusicController {
 	private AngusListener asl;
 
 	public static final double sampleInterval = (double)1/30;
-	public static final int numberOfBands = 512;
+	public static final int numberOfBands = 128;
 
 	public MusicController () {
 		// TODO setCurrentMode(PlayMode.REPEAT);
@@ -244,14 +244,28 @@ class MusicController {
 	 * NASTY VISUALISER STUFF
 	 */
 
-	public float getMagnitudeOfFrequency (int n) {
-		if (isPaused())
-			return 0;
-		float mag = asl.magnitudes[n];
-		mag *= -1;
+	public double getMagnitudeOfFrequency (int n) {
+		if (isPaused()) return 0;
+
+		double mag;
+		//get ave
+		if (n > 0) {
+			mag = (asl.magnitudes[n-1]+asl.magnitudes[n]*3+asl.magnitudes[n+1]) / 5;
+		} else {
+			mag = asl.magnitudes[n];
+		}
+
+		mag = -mag;
 		mag = 60 - mag;
 		mag /= 60;
-		return mag;
+
+		// amplification of lesser used frequencies
+		if (n > 3)
+			return mag * 1.4;
+		else if (n > 2)
+			return mag * 1.2;
+		else 
+			return mag;
 	}
 
 }
