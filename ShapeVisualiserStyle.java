@@ -1,6 +1,6 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-/*TODO*/ import java.util.Arrays;
+import javafx.scene.effect.BlendMode;
 
 public class ShapeVisualiserStyle implements VisualiserStyle {
 
@@ -45,7 +45,7 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
 			yOffset = VisualiserSceneController.SCALE*7*
 			(int)(points[1][0]-320*VisualiserSceneController.SCALE)/(100*VisualiserSceneController.SCALE);
 
-		gc.setGlobalBlendMode(javafx.scene.effect.BlendMode.ADD);
+		gc.setGlobalBlendMode(BlendMode.ADD);
 
 		gc.translate(0, -yOffset);
 		gc.setFill(Color.rgb(255,0,0));
@@ -61,7 +61,7 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
 
 		gc.translate(-xOffset, 0);
 
-		gc.setGlobalBlendMode(javafx.scene.effect.BlendMode.SRC_OVER);
+		gc.setGlobalBlendMode(BlendMode.SRC_OVER);
 	}
 
 	public double getXPosFromFreq(int f) {
@@ -80,15 +80,9 @@ public class ShapeVisualiserStyle implements VisualiserStyle {
 
 	public void rightKey() { }
 
-	public void upKey() {
-		lerpAmount += 0.05;
-		System.out.println("changed lerp amount to " + lerpAmount);
-	}
+	public void upKey() { }
 
-	public void downKey() {
-		lerpAmount -= 0.05;
-		System.out.println("changed lerp amount to " + lerpAmount);
-	}
+	public void downKey() { }
 
 	public String toString() { return "Shape"; }
 
