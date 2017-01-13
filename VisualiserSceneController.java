@@ -31,6 +31,7 @@ class VisualiserSceneController {
 		stage.setWidth(WIDTH);
 		stage.setHeight(HEIGHT+22);
 		stage.setTitle("Visualiser");
+		stage.setResizable(false);
 		stage.setOnCloseRequest( we -> {hide(); we.consume();} );
 		stage.addEventHandler(KeyEvent.KEY_PRESSED, k -> {
 			if (k.getCode() == KeyCode.LEFT) visualiser.leftKey();
