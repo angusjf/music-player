@@ -34,6 +34,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -51,6 +52,7 @@ public class MainSceneController {
 	private final Color greyText = Color.rgb(130, 130, 130);
 
 	@FXML private VBox libraryPane, queuePane;
+	@FXML private ScrollPane scrollPane;
 	@FXML private Button backButton, playModeButton, currentSongPauseButton, currentSongSkipButton, visualiseButton, clearQueueButton;
 	@FXML private Text albumNameText, artistNameText, featuresNamesText, songLengthText, songNameText, timeElapsedtext;
 	@FXML private TextField searchBox;
@@ -374,8 +376,8 @@ public class MainSceneController {
 	 * just calls generateBox for a list of Albums
 	 * and puts them into a Tile-Pane
 	 */
-	private TilePane generateListOfAlbums(List<Album> albumsList) {
-		TilePane tilePane = generateTilePane();
+	private Pane generateListOfAlbums(List<Album> albumsList) {
+		Pane tilePane = generatePane();
 		for (Album a : albumsList) tilePane.getChildren().addAll(generateAlbumBox(a));
 		return tilePane;
 	}
@@ -385,10 +387,10 @@ public class MainSceneController {
 	 * just calls generateBox for a list of Playlists
 	 * and puts them into a Tile-Pane
 	 */
-	private TilePane generateListOfPlaylists(List<Playlist> playlistsList) {
-		TilePane tilePane = generateTilePane();
-		for (Playlist p : playlistsList) tilePane.getChildren().addAll(generatePlaylistBox(p));
-		return tilePane;
+	private Pane generateListOfPlaylists(List<Playlist> playlistsList) {
+		Pane pane = generatePane();
+		for (Playlist p : playlistsList) pane.getChildren().addAll(generatePlaylistBox(p));
+		return pane;
 	}
 
 	/**
@@ -396,10 +398,10 @@ public class MainSceneController {
 	 * just calls generateBox for a list of Genres
 	 * and puts them into a Tile-Pane
 	 */
-	private TilePane generateListOfGenres(List<Genre> genresList) {
-		TilePane tilePane = generateTilePane();
-		for (Genre g : genresList) tilePane.getChildren().addAll(generateGenreBox(g));
-		return tilePane;
+	private Pane generateListOfGenres(List<Genre> genresList) {
+		Pane pane = generatePane();
+		for (Genre g : genresList) pane.getChildren().addAll(generateGenreBox(g));
+		return pane;
 	}
 
 	/**
@@ -407,10 +409,10 @@ public class MainSceneController {
 	 * just calls generateBox for a list of Artists
 	 * and puts them into a Tile-Pane
 	 */
-	private TilePane generateListOfArtists(List<Artist> artistsList) {
-		TilePane tilePane = generateTilePane();
-		for (Artist a : artistsList) tilePane.getChildren().addAll(generateArtistBox(a));
-		return tilePane;
+	private Pane generateListOfArtists(List<Artist> artistsList) {
+		Pane pane = generatePane();
+		for (Artist a : artistsList) pane.getChildren().addAll(generateArtistBox(a));
+		return pane;
 	}
 
 	/**
@@ -692,9 +694,15 @@ public class MainSceneController {
 	private VBox generateVBox2() { return new VBox(6); }
 	private VBox generateVBox3() { return new VBox(8); }
 
-	private TilePane generateTilePane() {
+	private Pane generatePane() {
+
+		//TODO fix this
+
 		TilePane tilePane = new TilePane(24, 24);
-		tilePane.setMinWidth(640);
+
+		tilePane.setMinWidth(0);
+		tilePane.setPrefWidth(scrollPane.getWidth());
+		//tilePane.setMaxWidth(2380);
 		return tilePane;
 	}
 
