@@ -1,7 +1,7 @@
 all: comp run
 comp:
-	javac *.java
+	javac -d . src/*.java
 run:
-	java -cp .:+libs/* Main
+	java -cp .:lib/* Main
 clean:
 	rm *.class

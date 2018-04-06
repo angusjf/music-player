@@ -160,7 +160,21 @@ public class MainSceneController {
 					dialog.setHeaderText("Create a new playlist");
 					dialog.setContentText("Enter the name for the new playlist");
 
-					dialog.showAndWait().ifPresent(input -> Playlist.createNewPlaylist(input));
+					Optional<String> result;
+
+					result = dialog.showAndWait();
+
+					if (result.isPresent() && result.get().length() > 0) {
+						Playlist.createNewPlaylist(result.get());
+					}
+
+					/*
+					dialog.showAndWait().ifPresent(input -> {
+						if (input.length() > 0) {
+							Playlist.createNewPlaylist(input);
+						}
+					});
+					*/
 				});
 
 				libraryPane.getChildren().addAll(newPlaylist, generateListOfPlaylists(Playlist.getAllFromDatabase()));
